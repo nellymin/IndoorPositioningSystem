@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">IndoorPositioningSystem</string>
+    <string name="room">Room</string>
+    <string name="room_width">Room width</string>
+    <string name="room_height">Room height</string>
+    <string name="beacon_1_x">Beacon 1 x</string>
+    <string name="beacon_1_y">Beacon 1 y</string>
+    <string name="beacon_2_x">Beacon 2 x</string>
+    <string name="beacon_2_y">Beacon 2 y</string>
+    <string name="beacon_3_x">Beacon 3 x</string>
+    <string name="beacon_3_y">Beacon 3 y</string>
+</resources>
