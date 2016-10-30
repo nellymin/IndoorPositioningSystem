@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -13,6 +14,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -60,8 +62,15 @@ public class MainActivity extends AppCompatActivity {
 
         SwitchLanguage("bg");
         setContentView(R.layout.activity_main);
-        Button drawButton = (Button) findViewById(R.id.btn_draw);
+        SharedPreferences sharedPreferences = getSharedPreferences("test", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("beacon1Mac","C9:35:A9:B1:84:9D");
+        editor.putString("beacon2Mac","E0:62:12:B9:F3:BE");
+        editor.putString("beacon3Mac","DD:12:B2:90:39:48");
 
+        editor.commit();
+
+        Button drawButton = (Button) findViewById(R.id.btn_draw);
         drawButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,6 +90,10 @@ public class MainActivity extends AppCompatActivity {
         // Bind to the service
         bindService(new Intent(this, BeaconsService.class), mConnection,
                 Context.BIND_AUTO_CREATE);
+        Log.wtf("a", mBeaconsBound+" ");
+        View opa = findViewById(R.id.editText);
+        sayHello(opa);
+
     }
 
     @Override
