@@ -8,6 +8,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -22,19 +23,26 @@ import java.util.Collection;
 
 import static org.altbeacon.beacon.service.scanner.ScanFilterUtils.TAG;
 
-public class BeaconsService extends Service implements BeaconConsumer {
+public class UserPositionService extends Service implements BeaconConsumer {
 
     private BeaconManager beaconManager;
 
-    /** Command to the service to display a message */
     static final int MSG_SAY_HELLO = 1;
     static final int MSG_CHANGE_MYBEACONS = 2;
     static final int MSG_GIVE_MYBEACONS_INFORMATION = 3;
+
+    public static final String
+            ACTION_USER_POSITION_BROADCAST = UserPositionService.class.getName() + "LocationBroadcast",
+            EXTRA_USER_POSITION_X = "extra_user_x",
+            EXTRA_USER_POSITION_Y = "extra_user_y";
+
+
     private double distanceToBeacon1 = -1;
     private double distanceToBeacon2 = -1;
     private double distanceToBeacon3 = -1;
 
     SharedPreferences sharedPreferences;
+    private int scanPeriod;
 
     /**
      * Handler of incoming messages from clients.
@@ -50,7 +58,7 @@ public class BeaconsService extends Service implements BeaconConsumer {
                     break;
                 case MSG_SAY_HELLO:
 
-                    Toast.makeText(getApplicationContext(), "hello!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "hello!"+distanceToBeacon1 , Toast.LENGTH_SHORT).show();
                     break;
                 case MSG_GIVE_MYBEACONS_INFORMATION:
                     Toast.makeText(getApplicationContext(), "opa",Toast.LENGTH_LONG).show();
@@ -94,7 +102,8 @@ public class BeaconsService extends Service implements BeaconConsumer {
         bm.getBeaconParsers().add(new BeaconParser()
                 .setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
 
-        bm.setBackgroundBetweenScanPeriod(12000);
+        scanPeriod = 50;
+        bm.setBackgroundBetweenScanPeriod(scanPeriod);
     }
 
     @Override
@@ -116,18 +125,22 @@ public class BeaconsService extends Service implements BeaconConsumer {
                         count ++;
                         if(beacon.getBluetoothAddress().equals(beacon1Mac)){
                             distanceToBeacon1 = (beacon.getDistance()*100)/100;
-                        }
-                        if(beacon.getBluetoothAddress().equals(beacon2Mac)){
-                            distanceToBeacon2 = (beacon.getDistance()*100)/100;
-                        }
-                        if(beacon.getBluetoothAddress().equals(beacon3Mac)){
-                            distanceToBeacon3 = (beacon.getDistance()*100)/100;
-                        }
-                        Log.wtf(TAG, count +"BEACON #" + beacon.getBluetoothAddress() + " is " + (beacon.getDistance()*100)/100 + " meters away");
-                        Toast.makeText(getApplicationContext(),beacon.getBluetoothAddress() + " is " + (beacon.getDistance()*100)/100 + " meters away" , Toast.LENGTH_LONG).show();
-                    }
+                            Log.wtf(TAG, "1 is " + (beacon.getDistance()*100)/100 + " away");
 
-                    Log.wtf(TAG, "-----------------");
+                        }
+                        else if(beacon.getBluetoothAddress().equals(beacon2Mac)){
+                            distanceToBeacon2 = (beacon.getDistance()*100)/100;
+                            Log.wtf(TAG, "2 is " + (beacon.getDistance()*100)/100 + " away");
+                        }
+                        else if(beacon.getBluetoothAddress().equals(beacon3Mac)){
+                            distanceToBeacon3 = (beacon.getDistance()*100)/100;
+                            Log.wtf(TAG, "3 is " + (beacon.getDistance()*100)/100 + " away");
+                        }
+                        else{
+                            Log.wtf(TAG, "4 is " + (beacon.getDistance()*100)/100 + " away");
+                        }
+                    }
+                    sendBroadcastMessage();
                 }
             }
         });
@@ -135,6 +148,15 @@ public class BeaconsService extends Service implements BeaconConsumer {
         try {
             beaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
         } catch (RemoteException e) {    }
+    }
+
+    private void sendBroadcastMessage() {
+        if (distanceToBeacon1!=-1 && distanceToBeacon2!=-1 && distanceToBeacon3!=-1) {
+            Intent intent = new Intent(ACTION_USER_POSITION_BROADCAST);
+            intent.putExtra(EXTRA_USER_POSITION_X, distanceToBeacon1);
+            intent.putExtra(EXTRA_USER_POSITION_Y, distanceToBeacon2);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        }
     }
 
 }

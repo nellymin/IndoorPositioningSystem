@@ -49,6 +49,12 @@
                     android:id="@+id/editText"
                     android:hint="@string/room_width" />
 
+                <TextView
+                    android:text="TextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:id="@+id/main_activity_text_view" />
+
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

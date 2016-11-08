@@ -1,8 +1,10 @@
 package com.nellymincheva.indoorpositioningsystem;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -13,10 +15,11 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.Locale;
 
@@ -48,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     public void sayHello(View v) {
         if (!mBeaconsBound) return;
         // Create and send a message to the service, using a supported 'what' value
-        Message msg = Message.obtain(null, BeaconsService.MSG_SAY_HELLO, 0, 0);
+        Message msg = Message.obtain(null, UserPositionService.MSG_SAY_HELLO, 0, 0);
         try {
             mBeaconsService.send(msg);
         } catch (RemoteException e) {
@@ -70,10 +73,24 @@ public class MainActivity extends AppCompatActivity {
 
         editor.commit();
 
+        final TextView textView = (TextView) findViewById(R.id.main_activity_text_view);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        double userX = intent.getDoubleExtra(UserPositionService.EXTRA_USER_POSITION_X, 0);
+                        double userY = intent.getDoubleExtra(UserPositionService.EXTRA_USER_POSITION_Y, 0);
+                        textView.setText("x: " + userX + ", y: " + userY);
+                    }
+                }, new IntentFilter(UserPositionService.ACTION_USER_POSITION_BROADCAST)
+        );
+
         Button drawButton = (Button) findViewById(R.id.btn_draw);
         drawButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                sayHello(v);
                 float radius = 2;
 
                 Paint paint = new Paint();
@@ -88,12 +105,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         // Bind to the service
-        bindService(new Intent(this, BeaconsService.class), mConnection,
+        bindService(new Intent(this, UserPositionService.class), mConnection,
                 Context.BIND_AUTO_CREATE);
-        Log.wtf("a", mBeaconsBound+" ");
-        View opa = findViewById(R.id.editText);
-        sayHello(opa);
-
     }
 
     @Override

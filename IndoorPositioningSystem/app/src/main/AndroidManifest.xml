@@ -17,7 +17,7 @@
         </activity>
 
         <service
-            android:name=".BeaconsService"
+            android:name=".UserPositionService"
             android:enabled="true"
             android:exported="true"></service>
     </application>
