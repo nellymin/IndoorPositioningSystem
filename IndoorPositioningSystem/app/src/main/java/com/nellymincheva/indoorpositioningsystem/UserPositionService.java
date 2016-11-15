@@ -27,6 +27,9 @@ public class UserPositionService extends Service implements BeaconConsumer {
 
     private BeaconManager beaconManager;
 
+    private String beacon1Mac, beacon2Mac, beacon3Mac;
+    private double beacon1X, beacon1Y, beacon2X, beacon2Y, beacon3X, beacon3Y;
+
     static final int MSG_SAY_HELLO = 1;
     static final int MSG_CHANGE_MYBEACONS = 2;
     static final int MSG_GIVE_MYBEACONS_INFORMATION = 3;
@@ -58,7 +61,7 @@ public class UserPositionService extends Service implements BeaconConsumer {
                     break;
                 case MSG_SAY_HELLO:
 
-                    Toast.makeText(getApplicationContext(), "hello!"+distanceToBeacon1 , Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), Math.round(distanceToBeacon1 * 100.0) / 100.0+"; "+Math.round(distanceToBeacon2 * 100.0) / 100.0+"; "+Math.round(distanceToBeacon3 * 100.0) / 100.0 , Toast.LENGTH_SHORT).show();
                     break;
                 case MSG_GIVE_MYBEACONS_INFORMATION:
                     Toast.makeText(getApplicationContext(), "opa",Toast.LENGTH_LONG).show();
@@ -84,6 +87,17 @@ public class UserPositionService extends Service implements BeaconConsumer {
         beaconManager = BeaconManager.getInstanceForApplication(this);
         SetupBeaconManager(beaconManager);
         sharedPreferences = getApplicationContext().getSharedPreferences("test", MODE_PRIVATE);
+
+        beacon1Mac = sharedPreferences.getString("beacon1Mac","");
+        beacon1X = sharedPreferences.getFloat("beacon1X", 0);
+        beacon1Y = sharedPreferences.getFloat("beacon1Y", 0);
+        beacon2Mac = sharedPreferences.getString("beacon2Mac","");
+        beacon2X = sharedPreferences.getFloat("beacon2X", 0);
+        beacon2Y = sharedPreferences.getFloat("beacon2Y", 0);
+        beacon3Mac = sharedPreferences.getString("beacon3Mac","");
+        beacon3X = sharedPreferences.getFloat("beacon3X", 0);
+        beacon3Y = sharedPreferences.getFloat("beacon3Y", 0);
+
         beaconManager.bind(this);
 
         return mMessenger.getBinder();
@@ -115,9 +129,6 @@ public class UserPositionService extends Service implements BeaconConsumer {
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
                 seconds++;
                 int count = 0;
-                String beacon1Mac = sharedPreferences.getString("beacon1Mac","");
-                String beacon2Mac = sharedPreferences.getString("beacon2Mac","");
-                String beacon3Mac = sharedPreferences.getString("beacon3Mac","");
 
                 if (beacons.size() > 0) {
                     for(Beacon beacon: beacons){
@@ -152,11 +163,20 @@ public class UserPositionService extends Service implements BeaconConsumer {
 
     private void sendBroadcastMessage() {
         if (distanceToBeacon1!=-1 && distanceToBeacon2!=-1 && distanceToBeacon3!=-1) {
+
+            double S = (square(beacon3X) - square(beacon2X) + square(beacon3Y) - square(beacon2Y) + square(distanceToBeacon2) - square(distanceToBeacon3)) / 2.0;
+            double T = (square(beacon1X) - square(beacon2X) + square(beacon1Y) - square(beacon2Y) + square(distanceToBeacon2) - square(distanceToBeacon1)) / 2.0;
+            double userPositionY = ((T * (beacon2X - beacon3X)) - (S * (beacon2X-beacon1X))) / (((beacon1Y - beacon2Y) * (beacon2X - beacon3X)) - ((beacon3Y - beacon2Y) * (beacon2X-beacon1X)));
+            double userPositionX = ((userPositionY * (beacon1Y - beacon2Y)) - T) / (beacon2X-beacon1X);
             Intent intent = new Intent(ACTION_USER_POSITION_BROADCAST);
-            intent.putExtra(EXTRA_USER_POSITION_X, distanceToBeacon1);
-            intent.putExtra(EXTRA_USER_POSITION_Y, distanceToBeacon2);
+            intent.putExtra(EXTRA_USER_POSITION_X, userPositionX);
+            intent.putExtra(EXTRA_USER_POSITION_Y, userPositionY);
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }
+    }
+
+    double square(double n){
+        return n*n;
     }
 
 }
