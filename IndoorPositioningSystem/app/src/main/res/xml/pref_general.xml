@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <PreferenceCategory
+        android:title="@string/room">
+
+        <EditTextPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:key="@string/pref_room_width"
+            android:inputType="numberDecimal"
+            android:defaultValue="@string/pref_room_width_default"
+            android:hint="@string/room_width" />
+
+        <EditTextPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:key="@string/pref_room_height"
+            android:inputType="numberDecimal"
+            android:defaultValue="@string/pref_room_height_default"
+            android:hint="@string/room_width" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/beacon_1">
+        <EditTextPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:key="@string/pref_beacon_1_mac"
+            android:inputType="text"
+            android:defaultValue="@string/pref_beacon_1_mac_default"
+            android:hint="@string/beacon_1_mac" />
+
+        <EditTextPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:key="@string/pref_beacon_1_x"
+            android:inputType="numberDecimal"
+            android:defaultValue="@string/pref_beacon_1_x_default"
+            android:hint="@string/beacon_1_x" />
+
+        <EditTextPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:key="@string/pref_beacon_1_y"
+            android:inputType="numberDecimal"
+            android:defaultValue="@string/pref_beacon_1_y_default"
+            android:hint="@string/beacon_1_y" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/beacon_2">
+
+        <EditTextPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:key="@string/pref_beacon_2_mac"
+            android:inputType="text"
+            android:defaultValue="@string/pref_beacon_2_mac_default"
+            android:hint="@string/beacon_2_mac" />
+
+        <EditTextPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:key="@string/pref_beacon_2_x"
+            android:inputType="numberDecimal"
+            android:defaultValue="@string/pref_beacon_2_x_default"
+            android:hint="@string/beacon_2_x" />
+
+        <EditTextPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:key="@string/pref_beacon_2_y"
+            android:inputType="numberDecimal"
+            android:defaultValue="@string/pref_beacon_2_y_default"
+            android:hint="@string/beacon_2_y" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/beacon_3">
+
+
+        <EditTextPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:key="@string/pref_beacon_3_mac"
+            android:inputType="text"
+            android:defaultValue="@string/pref_beacon_3_mac_default"
+            android:hint="@string/beacon_3_mac" />
+
+        <EditTextPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:key="@string/pref_beacon_3_x"
+            android:inputType="numberDecimal"
+            android:defaultValue="@string/pref_beacon_3_x_default"
+            android:hint="@string/beacon_3_x" />
+
+        <EditTextPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:key="@string/pref_beacon_3_y"
+            android:inputType="numberDecimal"
+            android:defaultValue="@string/pref_beacon_3_y_default"
+            android:hint="@string/beacon_3_y" />
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

@@ -1,12 +1,42 @@
 <resources>
-    <string name="app_name">IndoorPositioningSystem</string>
+    <string name="app_name">Where am I?</string>
     <string name="room">Room</string>
     <string name="room_width">Room width</string>
     <string name="room_height">Room height</string>
-    <string name="beacon_1_x">Beacon 1 x</string>
-    <string name="beacon_1_y">Beacon 1 y</string>
-    <string name="beacon_2_x">Beacon 2 x</string>
-    <string name="beacon_2_y">Beacon 2 y</string>
-    <string name="beacon_3_x">Beacon 3 x</string>
-    <string name="beacon_3_y">Beacon 3 y</string>
+    <string name="beacon_1">Beacon 1</string>
+    <string name="beacon_1_mac">Beacon 1 Mac</string>
+    <string name="beacon_2">Beacon 2</string>
+    <string name="beacon_2_mac">Beacon 2 Mac</string>
+    <string name="beacon_3">Beacon 3</string>
+    <string name="beacon_3_mac">Beacon 3 Mac</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_about">About</string>
+
+
+    <!-- Key name for storing location in SharedPreferences [CHAR LIMIT=NONE] -->
+    <string name="pref_room_width">roomWidth</string>
+    <string name="pref_room_width_default">10</string>
+    <string name="pref_room_height">roomHeight</string>
+    <string name="pref_room_height_default">10</string>
+
+    <string name="pref_beacon_1_mac">beacon1Mac</string>
+    <string name="pref_beacon_1_mac_default">C9:35:A9:B1:84:9D</string>
+    <string name="pref_beacon_1_x">beacon1X</string>
+    <string name="pref_beacon_1_x_default">0</string>
+    <string name="pref_beacon_1_y">beacon1Y</string>
+    <string name="pref_beacon_1_y_default">0</string>
+
+    <string name="pref_beacon_2_mac">beacon2Mac</string>
+    <string name="pref_beacon_2_mac_default">E0:62:12:B9:F3:BE</string>
+    <string name="pref_beacon_2_x">beacon2X</string>
+    <string name="pref_beacon_2_x_default">0</string>
+    <string name="pref_beacon_2_y">beacon2Y</string>
+    <string name="pref_beacon_2_y_default">0</string>
+
+    <string name="pref_beacon_3_mac">beacon3Mac</string>
+    <string name="pref_beacon_3_mac_default">DD:12:B2:90:39:48</string>
+    <string name="pref_beacon_3_x">beacon3X</string>
+    <string name="pref_beacon_3_x_default">0</string>
+    <string name="pref_beacon_3_y">beacon3Y</string>
+    <string name="pref_beacon_3_y_default">0</string>
 </resources>

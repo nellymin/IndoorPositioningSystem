@@ -7,7 +7,7 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:background="@color/colorAccent"
+    android:background="@color/colorPrimary"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.nellymincheva.indoorpositioningsystem.MainActivity">
 
@@ -23,7 +23,9 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
 
         <ScrollView
             android:layout_width="fill_parent"
@@ -39,28 +41,29 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:background="#ffffff"
-                    android:layout_height="400dp">
+                    android:layout_height="400dp"
+                    android:id="@+id/room">
 
                     <ImageView
                         app:srcCompat="@android:drawable/stat_sys_data_bluetooth"
                         android:id="@+id/beacon1"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
-                        android:background="@android:color/holo_orange_light" />
+                        android:background="#beffbb33" />
 
                     <ImageView
                         app:srcCompat="@android:drawable/stat_sys_data_bluetooth"
                         android:id="@+id/beacon2"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
-                        android:background="@android:color/holo_orange_dark" />
+                        android:background="#beff8800" />
 
                     <ImageView
                         app:srcCompat="@android:drawable/stat_sys_data_bluetooth"
                         android:id="@+id/beacon3"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
-                        android:background="@android:color/holo_green_light" />
+                        android:background="#be99cc00" />
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -70,84 +73,15 @@
                         android:layout_below="@+id/beacon1"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="86dp" />
+
                 </RelativeLayout>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/room"
-                    android:textSize="35dp"
-                    android:id="@+id/textView" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:ems="10"
-                    android:id="@+id/editText"
-                    android:hint="@string/room_width" />
 
                 <TextView
                     android:text="TextView"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="wrap_content"
                     android:id="@+id/main_activity_text_view" />
 
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:ems="10"
-                    android:id="@+id/editText3"
-                    android:hint="@string/room_height" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:ems="10"
-                    android:id="@+id/editText2"
-                    android:hint="@string/beacon_1_x" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:ems="10"
-                    android:id="@+id/editText4"
-                    android:hint="@string/beacon_1_y" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:ems="10"
-                    android:id="@+id/editText5"
-                    android:hint="@string/beacon_2_x" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:ems="10"
-                    android:id="@+id/editText6"
-                    android:hint="@string/beacon_2_y" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:ems="10"
-                    android:id="@+id/editText7"
-                    android:hint="@string/beacon_3_x" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:ems="10"
-                    android:id="@+id/editText8"
-                    android:hint="@string/beacon_3_y" />
 
             </LinearLayout>
         </ScrollView>

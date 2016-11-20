@@ -18,6 +18,9 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -76,6 +79,17 @@ public class MainActivity extends AppCompatActivity {
         SwitchLanguage("bg");
         setContentView(R.layout.activity_main);
         SharedPreferences sharedPreferences = getSharedPreferences("test", MODE_PRIVATE);
+        //sharedPreferences.getString("roomWidth"," ");
+        //RelativeLayout room = (RelativeLayout) findViewById(R.id.room);
+        float roomWidth = 10;
+        float roomHeight = 20;
+        //room.getMeasuredWidth();
+        //ViewGroup.LayoutParams params = room.getLayoutParams();
+// Changes the height and width to the specified *pixels*
+        //params.width = room.getHeight();//(int)((params.width/Math.min(roomHeight,roomWidth)) * Math.max(roomWidth, roomHeight));
+
+
+
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("beacon1Mac","C9:35:A9:B1:84:9D");
         editor.putFloat("beacon1X",2);
@@ -86,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
         editor.putString("beacon3Mac","DD:12:B2:90:39:48");
         editor.putFloat("beacon3X",4);
         editor.putFloat("beacon3Y",3);
+        editor.putFloat("roomWidth",10);
+        editor.putFloat("roomHeight",15);
 
         editor.commit();
 
@@ -151,6 +167,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            }
+        return true;
+    }
 
 
     private void SwitchLanguage(String language) {
