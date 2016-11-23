@@ -8,6 +8,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -86,17 +87,17 @@ public class UserPositionService extends Service implements BeaconConsumer {
 
         beaconManager = BeaconManager.getInstanceForApplication(this);
         SetupBeaconManager(beaconManager);
-        sharedPreferences = getApplicationContext().getSharedPreferences("test", MODE_PRIVATE);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         beacon1Mac = sharedPreferences.getString("beacon1Mac","");
-        beacon1X = sharedPreferences.getFloat("beacon1X", 0);
-        beacon1Y = sharedPreferences.getFloat("beacon1Y", 0);
+        beacon1X = Float.parseFloat(sharedPreferences.getString("beacon1X", "0"));
+        beacon1Y = Float.parseFloat(sharedPreferences.getString("beacon1Y", "0"));
         beacon2Mac = sharedPreferences.getString("beacon2Mac","");
-        beacon2X = sharedPreferences.getFloat("beacon2X", 0);
-        beacon2Y = sharedPreferences.getFloat("beacon2Y", 0);
+        beacon2X = Float.parseFloat(sharedPreferences.getString("beacon2X", "0"));
+        beacon2Y = Float.parseFloat(sharedPreferences.getString("beacon2Y", "0"));
         beacon3Mac = sharedPreferences.getString("beacon3Mac","");
-        beacon3X = sharedPreferences.getFloat("beacon3X", 0);
-        beacon3Y = sharedPreferences.getFloat("beacon3Y", 0);
+        beacon3X = Float.parseFloat(sharedPreferences.getString("beacon3X", "0"));
+        beacon3Y = Float.parseFloat(sharedPreferences.getString("beacon3Y", "0"));
 
         beaconManager.bind(this);
 
@@ -104,6 +105,9 @@ public class UserPositionService extends Service implements BeaconConsumer {
     }
 
     private void SetupBeaconManager(BeaconManager bm) {
+
+        //bm.setRssiFilterImplClass(RunningAverageRssiFilter.class);
+        //RunningAverageRssiFilter.setSampleExpirationMilliseconds(10000l);
 
         bm.getBeaconParsers().add(new BeaconParser()
                 .setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
@@ -178,5 +182,4 @@ public class UserPositionService extends Service implements BeaconConsumer {
     double square(double n){
         return n*n;
     }
-
 }

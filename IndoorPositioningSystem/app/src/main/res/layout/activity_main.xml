@@ -45,21 +45,21 @@
                     android:id="@+id/room">
 
                     <ImageView
-                        app:srcCompat="@android:drawable/stat_sys_data_bluetooth"
+                        app:srcCompat="@mipmap/beacon_icon"
                         android:id="@+id/beacon1"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
                         android:background="#beffbb33" />
 
                     <ImageView
-                        app:srcCompat="@android:drawable/stat_sys_data_bluetooth"
+                        app:srcCompat="@mipmap/beacon_icon"
                         android:id="@+id/beacon2"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
                         android:background="#beff8800" />
 
                     <ImageView
-                        app:srcCompat="@android:drawable/stat_sys_data_bluetooth"
+                        app:srcCompat="@mipmap/beacon_icon"
                         android:id="@+id/beacon3"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
