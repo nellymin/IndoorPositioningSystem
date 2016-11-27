@@ -11,15 +11,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.nellymincheva.indoorpositioningsystem.MainActivity">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Get distances"
-        android:id="@+id/btn_draw"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true" />
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -45,12 +36,19 @@
                     android:id="@+id/room">
 
                     <ImageView
+                        android:id="@+id/imgView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:background="@android:color/white"
+                        android:scaleType="fitXY">
+                    </ImageView>
+
+                    <ImageView
                         app:srcCompat="@mipmap/beacon_icon"
                         android:id="@+id/beacon1"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
                         android:background="#beffbb33" />
-
                     <ImageView
                         app:srcCompat="@mipmap/beacon_icon"
                         android:id="@+id/beacon2"
@@ -70,17 +68,40 @@
                         android:layout_height="wrap_content"
                         app:srcCompat="@mipmap/ic_launcher"
                         android:id="@+id/user_icon"
-                        android:layout_below="@+id/beacon1"
+                        android:layout_below="@+id/beacon3"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="86dp" />
 
                 </RelativeLayout>
 
                 <TextView
-                    android:text="TextView"
+                    android:text="Bluetooth is OFF"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/main_activity_text_view" />
+                    android:id="@+id/main_activity_text_view"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:text=""
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/beacon1Info"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:text=""
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/beacon2Info"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:text=""
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/beacon3Info"
+                    android:textSize="20sp" />
+
 
 
             </LinearLayout>

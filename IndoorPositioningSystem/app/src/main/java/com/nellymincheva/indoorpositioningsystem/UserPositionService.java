@@ -38,12 +38,21 @@ public class UserPositionService extends Service implements BeaconConsumer {
     public static final String
             ACTION_USER_POSITION_BROADCAST = UserPositionService.class.getName() + "LocationBroadcast",
             EXTRA_USER_POSITION_X = "extra_user_x",
-            EXTRA_USER_POSITION_Y = "extra_user_y";
+            EXTRA_USER_POSITION_Y = "extra_user_y",
+            EXTRA_DISTANCE_1 = "extra_distance_1",
+            EXTRA_SIGNAL_1 = "extra_signal_1",
+            EXTRA_DISTANCE_2 = "extra_distance_2",
+            EXTRA_SIGNAL_2 = "extra_signal_2",
+            EXTRA_DISTANCE_3 = "extra_distance_3",
+            EXTRA_SIGNAL_3 = "extra_signal_3";
 
 
     private double distanceToBeacon1 = -1;
     private double distanceToBeacon2 = -1;
     private double distanceToBeacon3 = -1;
+    private double signalBeacon1 = -1;
+    private double signalBeacon2 = -1;
+    private double signalBeacon3 = -1;
 
     SharedPreferences sharedPreferences;
     private int scanPeriod;
@@ -108,7 +117,6 @@ public class UserPositionService extends Service implements BeaconConsumer {
 
         //bm.setRssiFilterImplClass(RunningAverageRssiFilter.class);
         //RunningAverageRssiFilter.setSampleExpirationMilliseconds(10000l);
-
         bm.getBeaconParsers().add(new BeaconParser()
                 .setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
         bm.getBeaconParsers().add(new BeaconParser()
@@ -140,15 +148,18 @@ public class UserPositionService extends Service implements BeaconConsumer {
                         count ++;
                         if(beacon.getBluetoothAddress().equals(beacon1Mac)){
                             distanceToBeacon1 = (beacon.getDistance()*100)/100;
+                            signalBeacon1 = beacon.getRssi();
                             Log.wtf(TAG, "1 is " + (beacon.getDistance()*100)/100 + " away");
 
                         }
                         else if(beacon.getBluetoothAddress().equals(beacon2Mac)){
                             distanceToBeacon2 = (beacon.getDistance()*100)/100;
+                            signalBeacon2 = beacon.getRssi();
                             Log.wtf(TAG, "2 is " + (beacon.getDistance()*100)/100 + " away");
                         }
                         else if(beacon.getBluetoothAddress().equals(beacon3Mac)){
                             distanceToBeacon3 = (beacon.getDistance()*100)/100;
+                            signalBeacon3 = beacon.getRssi();
                             Log.wtf(TAG, "3 is " + (beacon.getDistance()*100)/100 + " away");
                         }
                         else{
@@ -172,13 +183,20 @@ public class UserPositionService extends Service implements BeaconConsumer {
             double T = (square(beacon1X) - square(beacon2X) + square(beacon1Y) - square(beacon2Y) + square(distanceToBeacon2) - square(distanceToBeacon1)) / 2.0;
             double userPositionY = ((T * (beacon2X - beacon3X)) - (S * (beacon2X-beacon1X))) / (((beacon1Y - beacon2Y) * (beacon2X - beacon3X)) - ((beacon3Y - beacon2Y) * (beacon2X-beacon1X)));
             double userPositionX = ((userPositionY * (beacon1Y - beacon2Y)) - T) / (beacon2X-beacon1X);
+
+
             Intent intent = new Intent(ACTION_USER_POSITION_BROADCAST);
+            intent.putExtra(EXTRA_DISTANCE_1, distanceToBeacon1);
+            intent.putExtra(EXTRA_SIGNAL_1, signalBeacon1);
+            intent.putExtra(EXTRA_DISTANCE_2, distanceToBeacon2);
+            intent.putExtra(EXTRA_SIGNAL_2, signalBeacon2);
+            intent.putExtra(EXTRA_DISTANCE_3, distanceToBeacon3);
+            intent.putExtra(EXTRA_SIGNAL_3, signalBeacon3);
             intent.putExtra(EXTRA_USER_POSITION_X, userPositionX);
             intent.putExtra(EXTRA_USER_POSITION_Y, userPositionY);
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }
     }
-
     double square(double n){
         return n*n;
     }
