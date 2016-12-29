@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "147838502630",
+    "firebase_url": "https://indoorpositioningsystem-82311.firebaseio.com",
+    "project_id": "indoorpositioningsystem-82311",
+    "storage_bucket": "indoorpositioningsystem-82311.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:147838502630:android:2c2ef7f273f092bd",
+        "android_client_info": {
+          "package_name": "com.nellymincheva.indoorpositioningsystem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "147838502630-7huqv4o9t29tv7hh6vu1rda2ahdhhp3o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nellymincheva.indoorpositioningsystem",
+            "certificate_hash": "468CD26F253108C54ACC5C530130C4DC15B3828D"
+          }
+        },
+        {
+          "client_id": "147838502630-mtq86q035ge1vor5clnqi20gm8qu6prn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2YxvBGhf4WJulmcbqoWOX87xNxXCdOPc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "147838502630-mtq86q035ge1vor5clnqi20gm8qu6prn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

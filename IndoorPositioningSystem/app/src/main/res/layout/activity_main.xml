@@ -43,25 +43,36 @@
                         android:scaleType="fitXY">
                     </ImageView>
 
+                    <com.nellymincheva.indoorpositioningsystem.GridView
+                        android:id="@+id/grid_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
                     <ImageView
-                        app:srcCompat="@mipmap/beacon_icon"
+                        app:srcCompat="@mipmap/beacon1"
                         android:id="@+id/beacon1"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
-                        android:background="#beffbb33" />
+                        android:background="#B5DEE3" />
                     <ImageView
-                        app:srcCompat="@mipmap/beacon_icon"
+                        app:srcCompat="@mipmap/beacon2"
                         android:id="@+id/beacon2"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
-                        android:background="#beff8800" />
+                        android:background="#B5DEE3" />
 
                     <ImageView
-                        app:srcCompat="@mipmap/beacon_icon"
+                        app:srcCompat="@mipmap/beacon3"
                         android:id="@+id/beacon3"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
-                        android:background="#be99cc00" />
+                        android:background="#B5DEE3" />
+                    <ImageView
+                        app:srcCompat="@mipmap/beacon4"
+                        android:id="@+id/beacon4"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:background="#B5DEE3" />
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -72,13 +83,22 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="86dp" />
 
+
                 </RelativeLayout>
 
-                <TextView
-                    android:text="Bluetooth is OFF"
+
+                <CheckBox
+                    android:text="Show Grid"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/main_activity_text_view"
+                    android:id="@+id/showGrid"
+                    android:checked="true" />
+
+                <TextView
+                    android:text="Bluetooth OFF or not all beacons in range"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/userPositionInfo"
                     android:textSize="20sp" />
 
                 <TextView
@@ -101,10 +121,16 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/beacon3Info"
                     android:textSize="20sp" />
-
+                <TextView
+                    android:text=""
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/beacon4Info"
+                    android:textSize="20sp" />
 
 
             </LinearLayout>
+
         </ScrollView>
     </LinearLayout>
 

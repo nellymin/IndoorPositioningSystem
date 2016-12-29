@@ -20,6 +20,17 @@
             android:inputType="numberDecimal"
             android:defaultValue="@string/pref_room_height_default"
             android:hint="@string/room_width" />
+
+
+        <EditTextPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:key="@string/pref_grid_size"
+            android:inputType="numberDecimal"
+            android:defaultValue="@string/pref_grid_size_default"
+            android:hint="@string/grid_size" />
+
+
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -105,6 +116,34 @@
             android:defaultValue="@string/pref_beacon_3_y_default"
             android:hint="@string/beacon_3_y" />
     </PreferenceCategory>
+
+    <PreferenceCategory
+    android:title="@string/beacon_4">
+
+    <EditTextPreference
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:key="@string/pref_beacon_4_mac"
+        android:inputType="text"
+        android:defaultValue="@string/pref_beacon_4_mac_default"
+        android:hint="@string/beacon_4_mac" />
+
+    <EditTextPreference
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:key="@string/pref_beacon_4_x"
+        android:inputType="numberDecimal"
+        android:defaultValue="@string/pref_beacon_4_x_default"
+        android:hint="@string/beacon_4_x" />
+
+    <EditTextPreference
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:key="@string/pref_beacon_4_y"
+        android:inputType="numberDecimal"
+        android:defaultValue="@string/pref_beacon_4_y_default"
+        android:hint="@string/beacon_4_y" />
+</PreferenceCategory>
 
 
 </PreferenceScreen>

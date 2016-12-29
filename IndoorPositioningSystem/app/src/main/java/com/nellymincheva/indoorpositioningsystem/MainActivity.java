@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -82,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
         SwitchLanguage("bg");
         setContentView(R.layout.activity_main);
 
+        GridView grid = (GridView) findViewById(R.id.grid_view);
+        grid.setNumColumns(10);
+        grid.setNumRows(10);
 
         final RelativeLayout room = (RelativeLayout) findViewById(R.id.room);
         final ViewGroup.LayoutParams roomParams = room.getLayoutParams();
@@ -101,10 +105,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-        final TextView textView = (TextView) findViewById(R.id.main_activity_text_view);
+        final TextView textView = (TextView) findViewById(R.id.userPositionInfo);
         final TextView beacon1Info = (TextView) findViewById(R.id.beacon1Info);
         final TextView beacon2Info = (TextView) findViewById(R.id.beacon2Info);
         final TextView beacon3Info = (TextView) findViewById(R.id.beacon3Info);
+        final TextView beacon4Info = (TextView) findViewById(R.id.beacon4Info);
         final ImageView userImg = (ImageView) findViewById(R.id.user_icon);
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 new BroadcastReceiver() {
@@ -112,16 +117,15 @@ public class MainActivity extends AppCompatActivity {
                     public void onReceive(Context context, Intent intent) {
                         double userX = intent.getDoubleExtra(UserPositionService.EXTRA_USER_POSITION_X, 0);
                         double userY = intent.getDoubleExtra(UserPositionService.EXTRA_USER_POSITION_Y, 0);
-                        double distance1 = intent.getDoubleExtra(UserPositionService.EXTRA_DISTANCE_1, 0);
                         double signal1 = intent.getDoubleExtra(UserPositionService.EXTRA_SIGNAL_1, 0);
-                        double distance2 = intent.getDoubleExtra(UserPositionService.EXTRA_DISTANCE_2, 0);
                         double signal2 = intent.getDoubleExtra(UserPositionService.EXTRA_SIGNAL_2, 0);
-                        double distance3 = intent.getDoubleExtra(UserPositionService.EXTRA_DISTANCE_3, 0);
                         double signal3 = intent.getDoubleExtra(UserPositionService.EXTRA_SIGNAL_3, 0);
+                        double signal4 = intent.getDoubleExtra(UserPositionService.EXTRA_SIGNAL_4, 0);
                         textView.setText("User position: (" + (double)Math.round(userX*100)/100 + "; " + (double)Math.round(userY*100)/100 + ") ");
-                        beacon1Info.setText("Distance: " + (double)Math.round(distance1*100)/100 + "m, Signal: " + signal1 + "dBm");
-                        beacon2Info.setText("Distance: " + (double)Math.round(distance2*100)/100 + "m, Signal: " + signal2 + "dBm");
-                        beacon3Info.setText("Distance: " + (double)Math.round(distance3*100)/100 + "m, Signal: " + signal3 + "dBm");
+                        beacon1Info.setText("Beacon 1 RSSI: " + signal1 + "dBm");
+                        beacon2Info.setText("Beacon 2 RSSI: " + signal2 + "dBm");
+                        beacon3Info.setText("Beacon 3 RSSI: " + signal3 + "dBm");
+                        beacon4Info.setText("Beacon 4 RSSI: " + signal4 + "dBm");
                         userImg.setX(((float) userX*(float)roomScale[0]));
                         userImg.setY(((float) userY*(float)roomScale[0]));
 
@@ -154,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
         final ImageView beacon1Img = (ImageView) findViewById(R.id.beacon1);
         final ImageView beacon2Img = (ImageView) findViewById(R.id.beacon2);
         final ImageView beacon3Img = (ImageView) findViewById(R.id.beacon3);
+        final ImageView beacon4Img = (ImageView) findViewById(R.id.beacon4);
 
         beacon1Img.setX(Float.parseFloat(sharedPreferences.getString("beacon1X", "0"))*(float)roomScale[0]);
         beacon1Img.setY(Float.parseFloat(sharedPreferences.getString("beacon1Y", "0"))*(float)roomScale[0]);
@@ -161,6 +166,8 @@ public class MainActivity extends AppCompatActivity {
         beacon2Img.setY(Float.parseFloat(sharedPreferences.getString("beacon2Y", "0"))*(float)roomScale[0]);
         beacon3Img.setX(Float.parseFloat(sharedPreferences.getString("beacon3X", "0"))*(float)roomScale[0]);
         beacon3Img.setY(Float.parseFloat(sharedPreferences.getString("beacon3Y", "0"))*(float)roomScale[0]);
+        beacon4Img.setX(Float.parseFloat(sharedPreferences.getString("beacon4X", "0"))*(float)roomScale[0]);
+        beacon4Img.setY(Float.parseFloat(sharedPreferences.getString("beacon4Y", "0"))*(float)roomScale[0]);
     }
 
     @Override
@@ -174,7 +181,9 @@ public class MainActivity extends AppCompatActivity {
             final double roomWidth = Float.parseFloat(sharedPreferences.getString("roomWidth", "1"));
             final double roomHeight = Float.parseFloat(sharedPreferences.getString("roomHeight", "1"));
             roomScale[0] = roomWidthInPixels / roomWidth;
-            roomParams.height = (int) (roomHeight * roomScale[0]);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    roomWidthInPixels, (int) (roomHeight * roomScale[0]));
+            room.setLayoutParams(params);
             DrawBeacons();
         }
         super.onResume();
@@ -195,6 +204,7 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.main_menu, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
