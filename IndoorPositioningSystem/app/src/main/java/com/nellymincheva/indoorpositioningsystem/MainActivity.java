@@ -30,6 +30,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
     int roomWidthInPixels = 0 ;
     final double[] roomScale = {1};
+
+    private FirebaseAuth mAuth;
 
 
 
@@ -86,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         GridView grid = (GridView) findViewById(R.id.grid_view);
         grid.setNumColumns(10);
         grid.setNumRows(10);
+
 
         final RelativeLayout room = (RelativeLayout) findViewById(R.id.room);
         final ViewGroup.LayoutParams roomParams = room.getLayoutParams();
@@ -143,13 +148,6 @@ public class MainActivity extends AppCompatActivity {
                 Context.BIND_AUTO_CREATE);
 
         DrawBeacons();
-
-        //RelativeLayout room = (RelativeLayout) findViewById(R.id.room);
-        //room.getMeasuredWidth();
-       // ViewGroup.LayoutParams params = room.getLayoutParams();
-// Changes the height and width to the specified *pixels*
-       // params.width = room.getHeight();//(int)((params.width/Math.min(roomHeight,roomWidth)) * Math.max(roomWidth, roomHeight));
-
     }
 
     private void DrawBeacons() {
@@ -219,7 +217,19 @@ public class MainActivity extends AppCompatActivity {
 // Start the Intent
                 startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
                 return true;
-            }
+            case R.id.action_login:
+                if (mAuth.getCurrentUser() == null) {
+                    mAuth.signOut();
+                    startActivity(new Intent(this, LoginActivity.class));
+                }
+                return true;
+            case R.id.action_logout:
+                if (mAuth.getCurrentUser() != null) {
+                    mAuth.signOut();
+                    startActivity(new Intent(this, LoginActivity.class));
+                }
+                return true;
+        }
         return true;
     }
     public void loadImageGallery(View view) {

@@ -12,4 +12,12 @@ tools:context="com.nellymincheva.indoorpositioningsystem.MainActivity" >
         android:title="@string/action_change_map"
         android:orderInCategory="200"
         app:showAsAction="never" />
+    <item android:id="@+id/action_login"
+        android:title="@string/action_login"
+        android:orderInCategory="200"
+        app:showAsAction="never" />
+    <item android:id="@+id/action_logout"
+        android:title="@string/action_logout"
+        android:orderInCategory="200"
+        app:showAsAction="never" />
 </menu>
