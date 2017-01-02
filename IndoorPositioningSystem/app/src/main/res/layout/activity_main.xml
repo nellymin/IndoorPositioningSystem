@@ -27,6 +27,17 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentStart="true">
 
+                <SearchView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <Button
+                    android:text="Add venue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/add_venue_button"
+                    android:onClick="onClick" />
+
                 <ScrollView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -104,12 +115,21 @@
                             android:id="@+id/showGrid"
                             android:checked="true" />
 
+
+                        <TextView
+                            android:text=""
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/user_logged_in"
+                            android:textSize="20sp" />
+
                         <TextView
                             android:text="Bluetooth OFF or not all beacons in range"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:id="@+id/userPositionInfo"
                             android:textSize="20sp" />
+
 
                         <TextView
                             android:text=""

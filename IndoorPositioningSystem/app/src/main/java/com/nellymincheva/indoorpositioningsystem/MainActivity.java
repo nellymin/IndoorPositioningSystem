@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -31,21 +32,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     Messenger mBeaconsService = null;
     boolean mBeaconsBound;
     private static int RESULT_LOAD_IMG = 1;
-    final int REQUEST_ENABLE_BT=2;
+    final int REQUEST_ENABLE_BT = 2;
     String imgDecodableString;
 
-    int roomWidthInPixels = 0 ;
+    int roomWidthInPixels = 0;
     final double[] roomScale = {1};
 
     private FirebaseAuth mAuth;
-
+    private FirebaseUser mUser;
 
 
     /**
@@ -71,25 +73,28 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-/*
-        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if(!mBluetoothAdapter.isEnabled())
-        {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        }
-        */
 
-        SwitchLanguage("bg");
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         GridView grid = (GridView) findViewById(R.id.grid_view);
         grid.setNumColumns(10);
         grid.setNumRows(10);
+
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
+        Button addVenueButton = (Button) findViewById(R.id.add_venue_button);
+        addVenueButton.setOnClickListener(this);
+
+        TextView LG = (TextView) findViewById(R.id.user_logged_in);
+        if(mAuth.getCurrentUser() != null){
+            LG.setText(mAuth.getCurrentUser().getEmail());
+        }
+        else{
+            LG.setText("not logged in");
+        }
 
 
         final RelativeLayout room = (RelativeLayout) findViewById(R.id.room);
@@ -126,13 +131,13 @@ public class MainActivity extends AppCompatActivity {
                         double signal2 = intent.getDoubleExtra(UserPositionService.EXTRA_SIGNAL_2, 0);
                         double signal3 = intent.getDoubleExtra(UserPositionService.EXTRA_SIGNAL_3, 0);
                         double signal4 = intent.getDoubleExtra(UserPositionService.EXTRA_SIGNAL_4, 0);
-                        textView.setText("User position: (" + (double)Math.round(userX*100)/100 + "; " + (double)Math.round(userY*100)/100 + ") ");
+                        textView.setText("User position: (" + (double) Math.round(userX * 100) / 100 + "; " + (double) Math.round(userY * 100) / 100 + ") ");
                         beacon1Info.setText("Beacon 1 RSSI: " + signal1 + "dBm");
                         beacon2Info.setText("Beacon 2 RSSI: " + signal2 + "dBm");
                         beacon3Info.setText("Beacon 3 RSSI: " + signal3 + "dBm");
                         beacon4Info.setText("Beacon 4 RSSI: " + signal4 + "dBm");
-                        userImg.setX(((float) userX*(float)roomScale[0]));
-                        userImg.setY(((float) userY*(float)roomScale[0]));
+                        userImg.setX(((float) userX * (float) roomScale[0]));
+                        userImg.setY(((float) userY * (float) roomScale[0]));
 
                     }
                 }, new IntentFilter(UserPositionService.ACTION_USER_POSITION_BROADCAST)
@@ -158,20 +163,20 @@ public class MainActivity extends AppCompatActivity {
         final ImageView beacon3Img = (ImageView) findViewById(R.id.beacon3);
         final ImageView beacon4Img = (ImageView) findViewById(R.id.beacon4);
 
-        beacon1Img.setX(Float.parseFloat(sharedPreferences.getString("beacon1X", "0"))*(float)roomScale[0]);
-        beacon1Img.setY(Float.parseFloat(sharedPreferences.getString("beacon1Y", "0"))*(float)roomScale[0]);
-        beacon2Img.setX(Float.parseFloat(sharedPreferences.getString("beacon2X", "0"))*(float)roomScale[0]);
-        beacon2Img.setY(Float.parseFloat(sharedPreferences.getString("beacon2Y", "0"))*(float)roomScale[0]);
-        beacon3Img.setX(Float.parseFloat(sharedPreferences.getString("beacon3X", "0"))*(float)roomScale[0]);
-        beacon3Img.setY(Float.parseFloat(sharedPreferences.getString("beacon3Y", "0"))*(float)roomScale[0]);
-        beacon4Img.setX(Float.parseFloat(sharedPreferences.getString("beacon4X", "0"))*(float)roomScale[0]);
-        beacon4Img.setY(Float.parseFloat(sharedPreferences.getString("beacon4Y", "0"))*(float)roomScale[0]);
+        beacon1Img.setX(Float.parseFloat(sharedPreferences.getString("beacon1X", "0")) * (float) roomScale[0]);
+        beacon1Img.setY(Float.parseFloat(sharedPreferences.getString("beacon1Y", "0")) * (float) roomScale[0]);
+        beacon2Img.setX(Float.parseFloat(sharedPreferences.getString("beacon2X", "0")) * (float) roomScale[0]);
+        beacon2Img.setY(Float.parseFloat(sharedPreferences.getString("beacon2Y", "0")) * (float) roomScale[0]);
+        beacon3Img.setX(Float.parseFloat(sharedPreferences.getString("beacon3X", "0")) * (float) roomScale[0]);
+        beacon3Img.setY(Float.parseFloat(sharedPreferences.getString("beacon3Y", "0")) * (float) roomScale[0]);
+        beacon4Img.setX(Float.parseFloat(sharedPreferences.getString("beacon4X", "0")) * (float) roomScale[0]);
+        beacon4Img.setY(Float.parseFloat(sharedPreferences.getString("beacon4Y", "0")) * (float) roomScale[0]);
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
 
-        if(roomWidthInPixels!=0){
+        if (roomWidthInPixels != 0) {
 
             final RelativeLayout room = (RelativeLayout) findViewById(R.id.room);
             final ViewGroup.LayoutParams roomParams = room.getLayoutParams();
@@ -186,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onResume();
     }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -213,18 +219,17 @@ public class MainActivity extends AppCompatActivity {
 
                 // Create intent to Open Image applications like Gallery, Google Photos
                 Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 // Start the Intent
                 startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
                 return true;
             case R.id.action_login:
-                if (mAuth.getCurrentUser() == null) {
-                    mAuth.signOut();
+                if (mUser.isAnonymous()) {
                     startActivity(new Intent(this, LoginActivity.class));
                 }
                 return true;
             case R.id.action_logout:
-                if (mAuth.getCurrentUser() != null) {
+                if (mUser != null) {
                     mAuth.signOut();
                     startActivity(new Intent(this, LoginActivity.class));
                 }
@@ -232,10 +237,11 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
+
     public void loadImageGallery(View view) {
         // Create intent to Open Image applications like Gallery, Google Photos
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         // Start the Intent
         startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
     }
@@ -250,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
                 // Get the Image from data
 
                 Uri selectedImage = data.getData();
-                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
                 // Get the cursor
                 Cursor cursor = getContentResolver().query(selectedImage,
@@ -271,11 +277,12 @@ public class MainActivity extends AppCompatActivity {
                         Toast.LENGTH_LONG).show();
             }
         } catch (Exception e) {
-            Toast.makeText(this, e+"Something went wrong", Toast.LENGTH_LONG)
+            Toast.makeText(this, e + "Something went wrong", Toast.LENGTH_LONG)
                     .show();
         }
 
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -292,5 +299,16 @@ public class MainActivity extends AppCompatActivity {
         config.locale = locale;
         getBaseContext().getResources().updateConfiguration(config,
                 getBaseContext().getResources().getDisplayMetrics());
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.add_venue_button:
+                startActivity(new Intent(this, AddVenueActivity.class));
+                if (mAuth.getCurrentUser() != null) {
+                }
+                return;
+        }
     }
 }
