@@ -4,10 +4,16 @@
 xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
 tools:context="com.nellymincheva.indoorpositioningsystem.MainActivity" >
+
+    <item android:id="@+id/action_search"
+        android:title="Search"
+        android:icon="@drawable/ic_search"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="android.support.v7.widget.SearchView"/>
     <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
+    android:title="@string/action_settings"
+    android:orderInCategory="100"
+    app:showAsAction="never" />
     <item android:id="@+id/action_change_map"
         android:title="@string/action_change_map"
         android:orderInCategory="200"

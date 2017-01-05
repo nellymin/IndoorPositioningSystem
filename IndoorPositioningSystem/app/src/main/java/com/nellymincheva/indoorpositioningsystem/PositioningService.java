@@ -10,7 +10,6 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import org.altbeacon.beacon.Beacon;
@@ -22,21 +21,17 @@ import org.altbeacon.beacon.Region;
 
 import java.util.Collection;
 
-import static org.altbeacon.beacon.service.scanner.ScanFilterUtils.TAG;
-
-public class UserPositionService extends Service implements BeaconConsumer {
+public class PositioningService extends Service implements BeaconConsumer {
 
     private BeaconManager beaconManager;
+    private Venue venue;
 
     private String beacon1Mac, beacon2Mac, beacon3Mac, beacon4Mac;
     private double beacon1X, beacon1Y, beacon2X, beacon2Y, beacon3X, beacon3Y, beacon4X, beacon4Y;
 
-    static final int MSG_SAY_HELLO = 1;
-    static final int MSG_CHANGE_MYBEACONS = 2;
-    static final int MSG_GIVE_MYBEACONS_INFORMATION = 3;
 
     public static final String
-            ACTION_USER_POSITION_BROADCAST = UserPositionService.class.getName() + "LocationBroadcast",
+            ACTION_USER_POSITION_BROADCAST = PositioningService.class.getName() + "LocationBroadcast",
             EXTRA_USER_POSITION_X = "extra_user_x",
             EXTRA_USER_POSITION_Y = "extra_user_y",
             EXTRA_SIGNAL_1 = "extra_signal_1",
@@ -131,12 +126,13 @@ public class UserPositionService extends Service implements BeaconConsumer {
 
                 if (beacons.size() > 0) {
                     for(Beacon beacon: beacons){
+                        //Log.wtf(TAG, beacon.getBluetoothAddress() + " " + beacon.getRssi());
                         //myBeaconsManager.AddMyBeacon(beacon,beacon.getDistance());
                         count ++;
                         if(beacon.getBluetoothAddress().equals(beacon1Mac)){
                             signalBeacon1 = beacon.getRssi();
                             //Log.wtf(TAG, "1 is " + (beacon.getDistance()*100)/100 + " away");
-                            Log.wtf(TAG, "" + signalBeacon1);
+                            //Log.wtf(TAG, "" + signalBeacon1);
 
                         }
                         else if(beacon.getBluetoothAddress().equals(beacon2Mac)){
@@ -160,6 +156,11 @@ public class UserPositionService extends Service implements BeaconConsumer {
         try {
             beaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
         } catch (RemoteException e) {    }
+    }
+
+    @Override
+    public void onDestroy() {
+        beaconManager.unbind(this);
     }
 
     private void sendBroadcastMessage() {

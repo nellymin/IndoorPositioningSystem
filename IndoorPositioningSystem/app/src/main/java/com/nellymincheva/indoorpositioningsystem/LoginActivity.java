@@ -107,6 +107,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             });
                 break;
             }
+            case R.id.skip_authentication_button:
+                startActivity(new Intent(this, MainActivity.class));
             default:
                 break;
         }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Where am I?</string>
+    <string name="app_name">Bekon</string>
     <string name="room">Room</string>
     <string name="room_width">Room width</string>
     <string name="room_height">Room height</string>
@@ -25,6 +25,8 @@
     <string name="action_login">Log in</string>
     <string name="action_logout">Logout</string>
     <string name="grid_size">Grid size</string>
+    <string name="app_label">Venues</string>
+    <string name="search_hint">Search venues</string>
 
     <!-- Key name for storing location in SharedPreferences [CHAR LIMIT=NONE] -->
     <string name="pref_room_width">roomWidth</string>

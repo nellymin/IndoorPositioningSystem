@@ -18,6 +18,7 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     int roomWidthInPixels = 0;
     final double[] roomScale = {1};
+    SearchView searchView;
 
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
@@ -80,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         GridView grid = (GridView) findViewById(R.id.grid_view);
-        grid.setNumColumns(10);
+        grid.setNumColumns(15);
         grid.setNumRows(10);
 
         mAuth = FirebaseAuth.getInstance();
@@ -125,12 +127,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
-                        double userX = intent.getDoubleExtra(UserPositionService.EXTRA_USER_POSITION_X, 0);
-                        double userY = intent.getDoubleExtra(UserPositionService.EXTRA_USER_POSITION_Y, 0);
-                        double signal1 = intent.getDoubleExtra(UserPositionService.EXTRA_SIGNAL_1, 0);
-                        double signal2 = intent.getDoubleExtra(UserPositionService.EXTRA_SIGNAL_2, 0);
-                        double signal3 = intent.getDoubleExtra(UserPositionService.EXTRA_SIGNAL_3, 0);
-                        double signal4 = intent.getDoubleExtra(UserPositionService.EXTRA_SIGNAL_4, 0);
+                        double userX = intent.getDoubleExtra(PositioningService.EXTRA_USER_POSITION_X, 0);
+                        double userY = intent.getDoubleExtra(PositioningService.EXTRA_USER_POSITION_Y, 0);
+                        double signal1 = intent.getDoubleExtra(PositioningService.EXTRA_SIGNAL_1, 0);
+                        double signal2 = intent.getDoubleExtra(PositioningService.EXTRA_SIGNAL_2, 0);
+                        double signal3 = intent.getDoubleExtra(PositioningService.EXTRA_SIGNAL_3, 0);
+                        double signal4 = intent.getDoubleExtra(PositioningService.EXTRA_SIGNAL_4, 0);
                         textView.setText("User position: (" + (double) Math.round(userX * 100) / 100 + "; " + (double) Math.round(userY * 100) / 100 + ") ");
                         beacon1Info.setText("Beacon 1 RSSI: " + signal1 + "dBm");
                         beacon2Info.setText("Beacon 2 RSSI: " + signal2 + "dBm");
@@ -140,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         userImg.setY(((float) userY * (float) roomScale[0]));
 
                     }
-                }, new IntentFilter(UserPositionService.ACTION_USER_POSITION_BROADCAST)
+                }, new IntentFilter(PositioningService.ACTION_USER_POSITION_BROADCAST)
         );
 
     }
@@ -149,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onStart() {
         super.onStart();
         // Bind to the service
-        bindService(new Intent(this, UserPositionService.class), mConnection,
+        bindService(new Intent(this, PositioningService.class), mConnection,
                 Context.BIND_AUTO_CREATE);
 
         DrawBeacons();
@@ -205,8 +207,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
+        activateSearch(menu);
         inflater.inflate(R.menu.main_menu, menu);
+        if(mUser == null){
+            menu.findItem(R.id.action_login).setVisible(true);
+            menu.findItem(R.id.action_logout).setVisible(false);
+        }
+        else{
+            menu.findItem(R.id.action_login).setVisible(false);
+            menu.findItem(R.id.action_logout).setVisible(true);
+        }
         return true;
+    }
+
+    private void activateSearch(Menu menu){
+        /*
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+        final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(new ComponentName(this, MainActivity.class)));
+        */
     }
 
     @Override
@@ -224,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
                 return true;
             case R.id.action_login:
-                if (mUser.isAnonymous()) {
+                if (mUser == null) {
                     startActivity(new Intent(this, LoginActivity.class));
                 }
                 return true;
@@ -285,11 +306,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-
         if (mConnection != null) {
             unbindService(mConnection);
         }
+        super.onDestroy();
+
     }
 
     private void SwitchLanguage(String language) {
@@ -305,9 +326,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_venue_button:
-                startActivity(new Intent(this, AddVenueActivity.class));
-                if (mAuth.getCurrentUser() != null) {
+                if (mAuth.getCurrentUser() == null) {
+                    Toast.makeText(this, "You should Log in to add a venue", Toast.LENGTH_LONG).show();
+                    return;
                 }
+                startActivity(new Intent(this, AddVenueActivity.class));
                 return;
         }
     }

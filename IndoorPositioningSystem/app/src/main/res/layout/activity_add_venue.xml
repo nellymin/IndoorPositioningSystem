@@ -22,9 +22,13 @@
             android:paddingBottom="@dimen/activity_vertical_margin"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:background="@color/colorPrimary"
             android:paddingTop="@dimen/activity_vertical_margin"
             tools:context="com.nellymincheva.indoorpositioningsystem.MainActivity">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></LinearLayout>
 
             <LinearLayout
                 android:orientation="vertical"
@@ -33,13 +37,27 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentStart="true"
                 android:weightSum="1">
-                        <EditText
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:key="@string/pref_beacon_1_mac"
+                    android:inputType="text"
+                    android:defaultValue="@string/pref_beacon_1_mac_default"
+                    android:hint="Name"
+                    android:maxLength = "100"
+                    android:id="@+id/venue_name" />
+
+                <EditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:key="@string/pref_room_width"
                             android:inputType="numberDecimal"
                             android:defaultValue="@string/pref_room_width_default"
-                            android:hint="@string/room_width" />
+                            android:hint="@string/room_width"
+                    android:maxLength = "100"
+                    android:id="@+id/room_width"
+                    android:saveEnabled="false" />
 
                         <EditText
                             android:layout_width="match_parent"
@@ -47,119 +65,62 @@
                             android:key="@string/pref_room_height"
                             android:inputType="numberDecimal"
                             android:defaultValue="@string/pref_room_height_default"
-                            android:hint="@string/room_height" />
+                            android:hint="@string/room_height"
+                            android:maxLength = "100"
+                            android:id="@+id/room_height" />
 
 
                 <Button
-                    android:text="Button"
+                    android:text="Next"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/addVenueWithDimentions" />
 
+
                 <EditText
+
                             android:layout_width="match_parent"
+                            android:id = "@+id/grid_size"
                             android:layout_height="wrap_content"
-                            android:key="@string/pref_grid_size"
                             android:inputType="numberDecimal"
                             android:defaultValue="@string/pref_grid_size_default"
+                    android:maxLength = "100"
                             android:hint="@string/grid_size" />
 
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:key="@string/pref_beacon_1_mac"
-                            android:inputType="text"
-                            android:defaultValue="@string/pref_beacon_1_mac_default"
-                            android:hint="@string/beacon_1_mac" />
 
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:key="@string/pref_beacon_1_x"
-                            android:inputType="numberDecimal"
-                            android:defaultValue="@string/pref_beacon_1_x_default"
-                            android:hint="@string/beacon_1_x" />
+                <Button
+                    android:text="Preview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/previewButton" />
 
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:key="@string/pref_beacon_1_y"
-                            android:inputType="numberDecimal"
-                            android:defaultValue="@string/pref_beacon_1_y_default"
-                            android:hint="@string/beacon_1_y" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:background="#ffffff"
+                    android:id="@+id/room"
+                    android:layout_height="400dp">
 
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:key="@string/pref_beacon_2_mac"
-                            android:inputType="text"
-                            android:defaultValue="@string/pref_beacon_2_mac_default"
-                            android:hint="@string/beacon_2_mac" />
+                    <ImageView
+                        android:id="@+id/imgView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:background="@android:color/white"
+                        android:scaleType="fitXY"></ImageView>
 
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:key="@string/pref_beacon_2_x"
-                            android:inputType="numberDecimal"
-                            android:defaultValue="@string/pref_beacon_2_x_default"
-                            android:hint="@string/beacon_2_x" />
-
-                <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:key="@string/pref_beacon_2_y"
-                            android:inputType="numberDecimal"
-                            android:defaultValue="@string/pref_beacon_2_y_default"
-                            android:hint="@string/beacon_2_y" />
+                    <com.nellymincheva.indoorpositioningsystem.GridView
+                        android:id="@+id/grid_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
 
 
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:key="@string/pref_beacon_3_mac"
-                            android:inputType="text"
-                            android:defaultValue="@string/pref_beacon_3_mac_default"
-                            android:hint="@string/beacon_3_mac" />
+                </RelativeLayout>
 
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:key="@string/pref_beacon_3_x"
-                            android:inputType="numberDecimal"
-                            android:defaultValue="@string/pref_beacon_3_x_default"
-                            android:hint="@string/beacon_3_x" />
+                <Button
+                    android:text="Next"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/setGridSize" />
 
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:key="@string/pref_beacon_3_y"
-                            android:inputType="numberDecimal"
-                            android:defaultValue="@string/pref_beacon_3_y_default"
-                            android:hint="@string/beacon_3_y" />
-
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:key="@string/pref_beacon_4_mac"
-                            android:inputType="text"
-                            android:defaultValue="@string/pref_beacon_4_mac_default"
-                            android:hint="@string/beacon_4_mac" />
-
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:key="@string/pref_beacon_4_x"
-                            android:inputType="numberDecimal"
-                            android:defaultValue="@string/pref_beacon_4_x_default"
-                            android:hint="@string/beacon_4_x" />
-
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:key="@string/pref_beacon_4_y"
-                            android:inputType="numberDecimal"
-                            android:defaultValue="@string/pref_beacon_4_y_default"
-                            android:hint="@string/beacon_4_y" />
             </LinearLayout>
 
         </RelativeLayout>
