@@ -33,6 +33,7 @@ public class PositioningService extends Service implements BeaconConsumer {
     public static final String
             ACTION_USER_POSITION_BROADCAST = PositioningService.class.getName() + "LocationBroadcast",
             EXTRA_USER_POSITION_X = "extra_user_x",
+<<<<<<< HEAD:IndoorPositioningSystem/app/src/main/java/com/nellymincheva/indoorpositioningsystem/PositioningService.java
             EXTRA_USER_POSITION_Y = "extra_user_y",
             EXTRA_SIGNAL_1 = "extra_signal_1",
             EXTRA_SIGNAL_2 = "extra_signal_2",
@@ -44,6 +45,14 @@ public class PositioningService extends Service implements BeaconConsumer {
     private double signalBeacon2 = -1;
     private double signalBeacon3 = -1;
     private double signalBeacon4 = -1;
+=======
+            EXTRA_USER_POSITION_Y = "extra_user_y";
+
+
+    private double distanceToBeacon1 = -1;
+    private double distanceToBeacon2 = -1;
+    private double distanceToBeacon3 = -1;
+>>>>>>> parent of b72542a... Signal data displayed & other stuff:IndoorPositioningSystem/app/src/main/java/com/nellymincheva/indoorpositioningsystem/UserPositionService.java
 
     SharedPreferences sharedPreferences;
     private int scanPeriod;
@@ -99,6 +108,12 @@ public class PositioningService extends Service implements BeaconConsumer {
 
     private void SetupBeaconManager(BeaconManager bm) {
 
+<<<<<<< HEAD:IndoorPositioningSystem/app/src/main/java/com/nellymincheva/indoorpositioningsystem/PositioningService.java
+=======
+        //bm.setRssiFilterImplClass(RunningAverageRssiFilter.class);
+        //RunningAverageRssiFilter.setSampleExpirationMilliseconds(10000l);
+
+>>>>>>> parent of b72542a... Signal data displayed & other stuff:IndoorPositioningSystem/app/src/main/java/com/nellymincheva/indoorpositioningsystem/UserPositionService.java
         bm.getBeaconParsers().add(new BeaconParser()
                 .setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
         bm.getBeaconParsers().add(new BeaconParser()
@@ -130,6 +145,7 @@ public class PositioningService extends Service implements BeaconConsumer {
                         //myBeaconsManager.AddMyBeacon(beacon,beacon.getDistance());
                         count ++;
                         if(beacon.getBluetoothAddress().equals(beacon1Mac)){
+<<<<<<< HEAD:IndoorPositioningSystem/app/src/main/java/com/nellymincheva/indoorpositioningsystem/PositioningService.java
                             signalBeacon1 = beacon.getRssi();
                             //Log.wtf(TAG, "1 is " + (beacon.getDistance()*100)/100 + " away");
                             //Log.wtf(TAG, "" + signalBeacon1);
@@ -142,6 +158,19 @@ public class PositioningService extends Service implements BeaconConsumer {
                         else if(beacon.getBluetoothAddress().equals(beacon3Mac)){
                             signalBeacon3 = beacon.getRssi();
                             //Log.wtf(TAG, "3 is " + (beacon.getDistance()*100)/100 + " away");
+=======
+                            distanceToBeacon1 = (beacon.getDistance()*100)/100;
+                            Log.wtf(TAG, "1 is " + (beacon.getDistance()*100)/100 + " away");
+
+                        }
+                        else if(beacon.getBluetoothAddress().equals(beacon2Mac)){
+                            distanceToBeacon2 = (beacon.getDistance()*100)/100;
+                            Log.wtf(TAG, "2 is " + (beacon.getDistance()*100)/100 + " away");
+                        }
+                        else if(beacon.getBluetoothAddress().equals(beacon3Mac)){
+                            distanceToBeacon3 = (beacon.getDistance()*100)/100;
+                            Log.wtf(TAG, "3 is " + (beacon.getDistance()*100)/100 + " away");
+>>>>>>> parent of b72542a... Signal data displayed & other stuff:IndoorPositioningSystem/app/src/main/java/com/nellymincheva/indoorpositioningsystem/UserPositionService.java
                         }
                         else if(beacon.getBluetoothAddress().equals(beacon4Mac)){
                             signalBeacon4 = beacon.getRssi();
@@ -158,6 +187,7 @@ public class PositioningService extends Service implements BeaconConsumer {
         } catch (RemoteException e) {    }
     }
 
+<<<<<<< HEAD:IndoorPositioningSystem/app/src/main/java/com/nellymincheva/indoorpositioningsystem/PositioningService.java
     @Override
     public void onDestroy() {
         beaconManager.unbind(this);
@@ -175,9 +205,26 @@ public class PositioningService extends Service implements BeaconConsumer {
             intent.putExtra(EXTRA_SIGNAL_4, signalBeacon4);
 
 
+=======
+    private void sendBroadcastMessage() {
+        if (distanceToBeacon1!=-1 && distanceToBeacon2!=-1 && distanceToBeacon3!=-1) {
+
+            double S = (square(beacon3X) - square(beacon2X) + square(beacon3Y) - square(beacon2Y) + square(distanceToBeacon2) - square(distanceToBeacon3)) / 2.0;
+            double T = (square(beacon1X) - square(beacon2X) + square(beacon1Y) - square(beacon2Y) + square(distanceToBeacon2) - square(distanceToBeacon1)) / 2.0;
+            double userPositionY = ((T * (beacon2X - beacon3X)) - (S * (beacon2X-beacon1X))) / (((beacon1Y - beacon2Y) * (beacon2X - beacon3X)) - ((beacon3Y - beacon2Y) * (beacon2X-beacon1X)));
+            double userPositionX = ((userPositionY * (beacon1Y - beacon2Y)) - T) / (beacon2X-beacon1X);
+            Intent intent = new Intent(ACTION_USER_POSITION_BROADCAST);
+>>>>>>> parent of b72542a... Signal data displayed & other stuff:IndoorPositioningSystem/app/src/main/java/com/nellymincheva/indoorpositioningsystem/UserPositionService.java
             intent.putExtra(EXTRA_USER_POSITION_X, userPositionX);
             intent.putExtra(EXTRA_USER_POSITION_Y, userPositionY);
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }
     }
+<<<<<<< HEAD:IndoorPositioningSystem/app/src/main/java/com/nellymincheva/indoorpositioningsystem/PositioningService.java
+=======
+
+    double square(double n){
+        return n*n;
+    }
+>>>>>>> parent of b72542a... Signal data displayed & other stuff:IndoorPositioningSystem/app/src/main/java/com/nellymincheva/indoorpositioningsystem/UserPositionService.java
 }

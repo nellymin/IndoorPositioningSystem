@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+<<<<<<< HEAD
     <color name="colorPrimary">#B5DEE3</color>
+=======
+    <color name="colorPrimary">#e6ee9c</color>
+>>>>>>> parent of b72542a... Signal data displayed & other stuff
     <color name="colorPrimaryDark">#156c63</color>
     <color name="colorAccent">#63e3c5</color>
     <color name="red">#de5433</color>
