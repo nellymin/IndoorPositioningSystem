@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 
 public class GridView extends View {
@@ -13,6 +12,7 @@ public class GridView extends View {
     private int numColumns, numRows;
     private int cellWidth, cellHeight;
     private Paint blackPaint = new Paint();
+    private Paint pinkPaint = new Paint();
     private boolean[][] cellChecked;
 
     public GridView(Context context) {
@@ -22,7 +22,12 @@ public class GridView extends View {
     public GridView(Context context, AttributeSet attrs) {
         super(context, attrs);
         blackPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        pinkPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        int myColor =
+                context.getResources().getColor(R.color.roomBg);
+        pinkPaint.setColor(myColor);
     }
+
 
 
     public void setNumColumns(int numColumns) {
@@ -86,7 +91,7 @@ public class GridView extends View {
 
                     canvas.drawRect(i * cellWidth, j * cellHeight,
                             (i + 1) * cellWidth, (j + 1) * cellHeight,
-                            blackPaint);
+                            pinkPaint);
                 }
             }
         }
@@ -100,6 +105,7 @@ public class GridView extends View {
         }
     }
 
+    /*
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN && this.canEdit) {
@@ -111,5 +117,10 @@ public class GridView extends View {
         }
 
         return true;
+    }
+    */
+    public void changeCell(int i, int j){
+        cellChecked[i][j] = !cellChecked[i][j];
+        invalidate();
     }
 }

@@ -7,8 +7,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import org.altbeacon.beacon.Beacon;
@@ -23,8 +21,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static android.content.ContentValues.TAG;
-
 public class CalibrationService extends Service implements BeaconConsumer {
 
     private BeaconManager beaconManager;
@@ -34,19 +30,19 @@ public class CalibrationService extends Service implements BeaconConsumer {
     long nearbyStarted;
 
     boolean calibratingPosition = false;
-    Map<String,Integer> positionRecords;
+    Map<String,Double> positionRecords;
     Map<String,Integer> addressRepeated;
     long calibrationStarted;
-
+    Intent intent;
     private int calibrationPeriod = 5000, scanNearbyPeriod = 5000;
 
     static final int MSG_SCAN_NEARBY = 1;
     static final int MSG_CALIBRATE_POSITION = 2;
 
     public static final String
-            ACTION_NEARBY_BEACONS_BROADCAST = CalibrationService.class.getName() + "BeaconsBroadcast",
+            ACTION_NEARBY_BEACONS_BROADCAST = "CalibrationServiceBeaconsBroadcast",
             EXTRA_NEARBY_MAP = "extra_nearby_map" ,
-    ACTION_CALIBRATE_POSITION_BROADCAST = CalibrationService.class.getName() + "CalibratePositionBroadcast",
+    ACTION_CALIBRATE_POSITION_BROADCAST = "CalibrationServiceCalibratePositionBroadcast",
     EXTRA_CALIBRATION_MAP = "extra_calibration_map";
 
 
@@ -64,11 +60,13 @@ public class CalibrationService extends Service implements BeaconConsumer {
                     nearbyBeacons = new HashMap<>();
                     scanNearbyBeacons = true;
                     nearbyStarted = System.currentTimeMillis( );
+                    break;
                 case MSG_CALIBRATE_POSITION:
                     positionRecords = new HashMap<>();
                     addressRepeated = new HashMap<>();
                     calibratingPosition = true;
                     calibrationStarted = System.currentTimeMillis();
+                    break;
 
                 default:
                     super.handleMessage(msg);
@@ -119,7 +117,7 @@ public class CalibrationService extends Service implements BeaconConsumer {
                 if (beacons.size() > 0) {
                     long timeNow = System.currentTimeMillis( );
                     if(calibratingPosition){
-                        if(timeNow - calibrationStarted > 5000) {
+                        if(timeNow - calibrationStarted > 15000) {
                             sendBroadcastMessage("CalibratePosition");
                             calibratingPosition = false;
                         }
@@ -127,14 +125,13 @@ public class CalibrationService extends Service implements BeaconConsumer {
                         for(Beacon beacon: beacons){
                             String address = beacon.getBluetoothAddress();
 
-                            Log.wtf(TAG,"shit2");
                             if(positionRecords.containsKey(address)){
                                 int repeated = addressRepeated.get(address);
                                 positionRecords.put(address, (repeated * positionRecords.get(address) + beacon.getRssi())/ (repeated+1));
                                 addressRepeated.put(address, repeated+1);
                             }
                             else{
-                                positionRecords.put(address, beacon.getRssi());
+                                positionRecords.put(address, ((double) beacon.getRssi()));
                                 addressRepeated.put(address, 1);
                             }
                         }
@@ -169,21 +166,17 @@ public class CalibrationService extends Service implements BeaconConsumer {
     }
 
     private void sendBroadcastMessage(String action) {
-        Intent intent = new Intent();
         switch(action){
             case "NearbyBeacons":
                 intent = new Intent(ACTION_NEARBY_BEACONS_BROADCAST);
                 intent.putExtra(EXTRA_NEARBY_MAP, (Serializable) nearbyBeacons);
-                intent.putExtra("action", "NearbyBeacons");
-                return;
+                break;
             case "CalibratePosition":
-                Log.wtf(TAG,"shit");
                 intent = new Intent(ACTION_CALIBRATE_POSITION_BROADCAST);
                 intent.putExtra(EXTRA_CALIBRATION_MAP, (Serializable) positionRecords);
-                intent.putExtra("action", "CalibratePosition");
-                return;
+                break;
         }
 
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        sendBroadcast(intent);
     }
 }

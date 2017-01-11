@@ -28,98 +28,150 @@
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"></LinearLayout>
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true"
-                android:weightSum="1">
+                android:layout_alignParentStart="true">
 
-                <EditText
+                <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:key="@string/pref_beacon_1_mac"
-                    android:inputType="text"
-                    android:defaultValue="@string/pref_beacon_1_mac_default"
-                    android:hint="Name"
-                    android:maxLength = "100"
-                    android:id="@+id/venue_name" />
+                    android:layout_height="match_parent"
+                    android:id="@+id/sizing">
 
-                <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:key="@string/pref_room_width"
-                            android:inputType="numberDecimal"
-                            android:defaultValue="@string/pref_room_width_default"
-                            android:hint="@string/room_width"
-                    android:maxLength = "100"
-                    android:id="@+id/room_width"
-                    android:saveEnabled="false" />
-
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:key="@string/pref_room_height"
-                            android:inputType="numberDecimal"
-                            android:defaultValue="@string/pref_room_height_default"
-                            android:hint="@string/room_height"
-                            android:maxLength = "100"
-                            android:id="@+id/room_height" />
-
-
-                <Button
-                    android:text="Next"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/addVenueWithDimentions" />
-
-
-                <EditText
-
-                            android:layout_width="match_parent"
-                            android:id = "@+id/grid_size"
-                            android:layout_height="wrap_content"
-                            android:inputType="numberDecimal"
-                            android:defaultValue="@string/pref_grid_size_default"
-                    android:maxLength = "100"
-                            android:hint="@string/grid_size" />
-
-
-                <Button
-                    android:text="Preview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/previewButton" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:background="#ffffff"
-                    android:id="@+id/room"
-                    android:layout_height="400dp">
-
-                    <ImageView
-                        android:id="@+id/imgView"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:background="@android:color/white"
-                        android:scaleType="fitXY"></ImageView>
-
-                    <com.nellymincheva.indoorpositioningsystem.GridView
-                        android:id="@+id/grid_view"
+                    <EditText
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="wrap_content"
+                        android:key="@string/pref_beacon_1_mac"
+                        android:inputType="text"
+                        android:defaultValue="@string/pref_beacon_1_mac_default"
+                        android:hint="Name"
+                        android:maxLength = "100"
+                        android:id="@+id/venue_name" />
 
+                    <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:key="@string/pref_room_width"
+                                android:inputType="numberDecimal"
+                                android:defaultValue="@string/pref_room_width_default"
+                                android:hint="@string/room_width"
+                        android:maxLength = "100"
+                        android:id="@+id/room_width"
+                        android:saveEnabled="false" />
 
-                </RelativeLayout>
+                    <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:key="@string/pref_room_height"
+                                android:inputType="numberDecimal"
+                                android:defaultValue="@string/pref_room_height_default"
+                                android:hint="@string/room_height"
+                                android:maxLength = "100"
+                                android:id="@+id/room_height" />
 
-                <Button
-                    android:text="Next"
+                    <Button
+                        android:text="Next"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/addVenueWithDimentions" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/setGridSize" />
+                    android:layout_height="match_parent"
+                    android:weightSum="1"
+                    android:id="@+id/grid"
+                    android:visibility="invisible"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true">
+
+
+                    <EditText
+
+                        android:layout_width="match_parent"
+                        android:id = "@+id/grid_size"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal"
+                        android:defaultValue="@string/pref_grid_size_default"
+                        android:maxLength = "100"
+                        android:hint="@string/grid_size" />
+
+
+                    <Button
+                        android:text="Preview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/previewButton" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:background="#ffffff"
+                        android:id="@+id/room"
+                        android:layout_height="400dp">
+
+                        <ImageView
+                            android:id="@+id/imgView"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:background="@android:color/white"
+                            android:scaleType="fitXY"></ImageView>
+
+                        <com.nellymincheva.indoorpositioningsystem.GridView
+                            android:id="@+id/grid_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+
+                    </RelativeLayout>
+
+                    <Button
+                        android:text="Next"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/setGridSize" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:weightSum="1"
+                    android:id="@+id/calibrate"
+                    android:visibility="invisible"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true">
+
+
+                    <Button
+                        android:text="Start calibration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/startButton" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:background="#ffffff"
+                        android:id="@+id/room2"
+                        android:layout_height="400dp">
+
+
+                        <com.nellymincheva.indoorpositioningsystem.GridView
+                            android:id="@+id/grid_view2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+
+                    </RelativeLayout>
+
+                    <Button
+                        android:text="Done"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/done" />
+
+                </LinearLayout>
 
             </LinearLayout>
 

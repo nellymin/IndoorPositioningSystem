@@ -1,0 +1,47 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.nellymincheva.indoorpositioningsystem.VenueActivity">
+
+
+    <LinearLayout
+        android:id="@+id/fullscreen_content"
+        style="?metaButtonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:background="#ffffff"
+            android:layout_height="400dp"
+            android:id="@+id/room"
+            android:padding="20dp">
+
+            <ImageView
+                android:id="@+id/imgView"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@color/roomBg"
+                android:scaleType="fitXY"></ImageView>
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_face_"
+                android:id="@+id/user_icon"
+                android:layout_below="@+id/beacon3"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="86dp" />
+
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+</FrameLayout>

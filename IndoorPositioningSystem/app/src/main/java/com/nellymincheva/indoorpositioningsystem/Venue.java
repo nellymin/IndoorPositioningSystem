@@ -23,6 +23,9 @@ public class Venue {
         calibrationData = new ArrayList<>();
 
     }
+    public Venue(){
+
+    }
 
     public void SetGridSize(double gridSize){
         this.gridSize = gridSize;
@@ -91,5 +94,68 @@ public class Venue {
         return this.calibrationData;
     }
 
+    public double getGridSize() {
+        return gridSize;
+    }
+
+    public void setGridSize(double gridSize) {
+        this.gridSize = gridSize;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public double getWidth() {
+        return width;
+    }
+
+    public int getMaxX() {
+        return maxX;
+    }
+
+    public int getMaxY() {
+        return maxY;
+    }
+
+    public List<PositionRecord> getCalibrationData() {
+        return calibrationData;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String[] getBeacons() {
+        return beacons;
+    }
+
+    public void setBeacons(String[] beacons) {
+        this.beacons = beacons;
+    }
+
+    public void setCalibrationData(List<PositionRecord> calibrationData) {
+        this.calibrationData = calibrationData;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    public void setMaxX(int maxX) {
+        this.maxX = maxX;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setMaxY(int maxY) {
+        this.maxY = maxY;
+    }
+
+    public void setWidth(double width) {
+        this.width = width;
+    }
 }
 
