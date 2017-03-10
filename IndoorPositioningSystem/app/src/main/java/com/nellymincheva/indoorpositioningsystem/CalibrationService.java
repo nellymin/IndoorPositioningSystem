@@ -7,6 +7,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.altbeacon.beacon.Beacon;
@@ -20,6 +21,8 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import static android.content.ContentValues.TAG;
 
 public class CalibrationService extends Service implements BeaconConsumer {
 
@@ -105,6 +108,7 @@ public class CalibrationService extends Service implements BeaconConsumer {
                 .setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
 
         scanPeriod = 10;
+        bm.setForegroundBetweenScanPeriod(scanPeriod);
         bm.setBackgroundBetweenScanPeriod(scanPeriod);
     }
 
@@ -115,6 +119,9 @@ public class CalibrationService extends Service implements BeaconConsumer {
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
 
                 if (beacons.size() > 0) {
+
+                    Log.wtf(TAG, "cal position?  " + calibratingPosition);
+                    Log.wtf(TAG, "cal started " + calibrationStarted);
                     long timeNow = System.currentTimeMillis( );
                     if(calibratingPosition){
                         if(timeNow - calibrationStarted > 15000) {
@@ -123,6 +130,7 @@ public class CalibrationService extends Service implements BeaconConsumer {
                         }
                         else
                         for(Beacon beacon: beacons){
+                            Log.wtf(TAG, "zasqkoh " + beacon.getRssi());
                             String address = beacon.getBluetoothAddress();
 
                             if(positionRecords.containsKey(address)){

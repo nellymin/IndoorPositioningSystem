@@ -47,13 +47,13 @@
                     android:id="@+id/show_venue_button"
                     android:onClick="onClick" />
 
-                <ScrollView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/scrollView"
-                    android:fillViewport="true">
-
-                </ScrollView>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/venues_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="12dp"
+                    android:orientation="vertical"
+                    android:scrollbars="none"/>
             </LinearLayout>
 
         </RelativeLayout>

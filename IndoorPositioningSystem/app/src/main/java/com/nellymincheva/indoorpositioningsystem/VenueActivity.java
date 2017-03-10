@@ -7,17 +7,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Messenger;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,9 +30,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -103,11 +109,13 @@ public class VenueActivity extends AppCompatActivity {
     };
 
     private DatabaseReference mDatabase;
-    Venue venue;
+    public Venue venue;
     private String venueId, userUid;
 
     Messenger mBeaconsService = null;
     boolean mBeaconsBound;
+    int roomWidthInPixels = 0 ;
+    final double[] roomScale = {1};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,6 +147,38 @@ public class VenueActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
+
+        final RelativeLayout room = (RelativeLayout) findViewById(R.id.room);
+        final ViewGroup.LayoutParams roomParams = room.getLayoutParams();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        final double roomWidth = Float.parseFloat(sharedPreferences.getString("roomWidth", "1"));
+        final double roomHeight = Float.parseFloat(sharedPreferences.getString("roomHeight", "1"));
+        ViewTreeObserver viewTreeObserver = room.getViewTreeObserver();
+        if (viewTreeObserver.isAlive()) {
+            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    room.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    roomWidthInPixels = room.getMeasuredWidth();
+                    roomScale[0] = room.getMeasuredWidth() / roomWidth;
+                    roomParams.height = (int) (roomHeight * roomScale[0]);
+                }
+            });
+        }
+        final ImageView userImg = (ImageView) findViewById(R.id.user_icon);
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        double userX = intent.getDoubleExtra(PositioningService.EXTRA_USER_POSITION_X, 0);
+                        double userY = intent.getDoubleExtra(PositioningService.EXTRA_USER_POSITION_Y, 0);
+                        userImg.setX(((float) userX*(float)roomScale[0]));
+                        userImg.setY(((float) userY*(float)roomScale[0]));
+
+                    }
+                }, new IntentFilter(PositioningService.ACTION_USER_POSITION_BROADCAST)
+        );
+
     }
 
     /**
@@ -169,7 +209,28 @@ public class VenueActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         super.onStart();
         // Bind to the service
-        bindService(new Intent(this, PositioningService.class), mConnection,
+        Bundle b = new Bundle();
+        venue = new Venue();
+        venue.name = "PATKAN";
+        List<PositionRecord> pr = new ArrayList<>();
+        PositionRecord rec = new PositionRecord(0,0);
+        double rssi = -30;
+        rec.AddRecord("EE:86:9C:E0:19:F9", rssi);
+        venue.maxX=2;
+        venue.maxY=2;
+        pr.add(rec);
+        rec = new PositionRecord(0,1);
+        rssi = -60;
+        String[] bec = new String[1];
+        bec[0]  ="EE:86:9C:E0:19:F9";
+        venue.setBeacons(bec);
+        rec.AddRecord("EE:86:9C:E0:19:F9", rssi);
+        pr.add(rec);
+        venue.setCalibrationData(pr);
+        Intent positioningServiceIntent = new Intent(this, PositioningService.class);
+        String venueGson = new Gson().toJson(venue);
+        positioningServiceIntent.putExtra("venue", venueGson);
+        bindService(positioningServiceIntent, mConnection,
                 Context.BIND_AUTO_CREATE);
 
         ImageView userIcon = (ImageView) findViewById(R.id.user_icon);
@@ -184,35 +245,14 @@ public class VenueActivity extends AppCompatActivity {
                 }, new IntentFilter(PositioningService.ACTION_USER_POSITION_BROADCAST)
         );
 
-        Query q = mDatabase.child("venues/" + userUid + "/" + venueId);
+        Query q = mDatabase.child("venues/" + venueId);
         q.addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot snapshot) {
 
-                Log.v("hoss", snapshot.getValue().toString());
-                venue = new Venue();
-                venue.setWidth(Double.parseDouble(snapshot.child("width").getValue().toString()));
-                venue.setHeight(Double.parseDouble(snapshot.child("height").getValue().toString()));
-                venue.setGridSize(Double.parseDouble(snapshot.child("gridSize").getValue().toString()));
-
-
-                for (DataSnapshot child : snapshot.child("calibrationData").getChildren()) {
-
-                    Map<String,Double> records = new HashMap<String, Double>();
-                    for (DataSnapshot record : child.child("records").getChildren()){
-                        records.put(record.getKey(), Double.parseDouble(record.getValue().toString()));
-                    }
-                    PositionRecord pr = new PositionRecord(Integer.parseInt(child.child("x").getValue().toString()),
-                            Integer.parseInt(child.child("y").getValue().toString()),
-                            records);
-
-                    Log.v("hoss", pr.x + " ");
-
-
-                }
-
-//                Log.wtf("opa", venue.name);
+                venue =  (Venue) new Gson().fromJson(snapshot.getValue().toString(), Venue.class);
+                getSupportActionBar().setTitle("" + venue.name);
             }
 
             @Override

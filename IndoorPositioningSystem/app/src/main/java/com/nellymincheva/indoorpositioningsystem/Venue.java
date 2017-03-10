@@ -3,23 +3,34 @@ package com.nellymincheva.indoorpositioningsystem;
 
 import android.util.Pair;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Venue {
+public class Venue extends Object implements Serializable{
     public String name;
     public double width, height;
     public List<PositionRecord> calibrationData;
     public String[] beacons;
     public double gridSize;
     public int maxX, maxY;
+    public String userId;
+    public String venueId;
 
 
     public Venue(double width, double height, String name){
         this.name = name;
         this.width = width;
         this.height = height;
+        calibrationData = new ArrayList<>();
+
+    }
+    public Venue(double width, double height, String name, String userId){
+        this.name = name;
+        this.width = width;
+        this.height = height;
+        this.userId = userId;
         calibrationData = new ArrayList<>();
 
     }
@@ -59,7 +70,7 @@ public class Venue {
 
     public Pair<Integer,Integer> findPosition (Map<String,Integer> records){
         int positionX = -1, positionY = -1;
-        double minimalEucledeanDistance = -1 ,eucledeanDistance;
+        double minimalEucledeanDistance = 999999999 ,eucledeanDistance;
         for(int x = 0; x < maxX; x++){
             for(int y = 0; y < maxY; y++){
                 for(PositionRecord pr : this.calibrationData) {
@@ -157,5 +168,6 @@ public class Venue {
     public void setWidth(double width) {
         this.width = width;
     }
+
 }
 

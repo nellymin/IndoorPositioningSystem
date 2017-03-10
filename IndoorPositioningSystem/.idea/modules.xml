@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/IndoorPositioningSystem.iml" filepath="$PROJECT_DIR$/IndoorPositioningSystem.iml" />
-      <module fileurl="file://$PROJECT_DIR$/android-beacon-library-2.9/android-beacon-library-2.9.iml" filepath="$PROJECT_DIR$/android-beacon-library-2.9/android-beacon-library-2.9.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android-beacon-library-2.9.2/android-beacon-library-2.9.2.iml" filepath="$PROJECT_DIR$/android-beacon-library-2.9.2/android-beacon-library-2.9.2.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

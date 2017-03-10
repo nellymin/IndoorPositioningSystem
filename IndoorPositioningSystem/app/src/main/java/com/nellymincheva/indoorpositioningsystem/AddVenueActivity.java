@@ -1,16 +1,21 @@
 package com.nellymincheva.indoorpositioningsystem;
 
+import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -36,6 +41,7 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
     private DatabaseReference mDatabase;
     private String mUserId;
 
+    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     private Venue newVenue;
     Messenger mCalibrationService = null;
     boolean mCalibrationServiceBound;
@@ -127,8 +133,10 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
         // Bind to the service
         bindService(new Intent(this, CalibrationService.class), mConnection,
                 Context.BIND_AUTO_CREATE);
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        mDatabase = database.getReference();
         mAuth = FirebaseAuth.getInstance();
         if (mAuth != null)
             mUser = mAuth.getCurrentUser();
@@ -150,6 +158,31 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_COARSE_LOCATION: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "coarse location permission granted");
+                } else {
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Cannot create venue");
+                    builder.setMessage("Since location access has not been granted, Bekon will not be able to detect beacons, therefore create a new venue");
+                    builder.setPositiveButton(android.R.string.ok, null);
+                    builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                        }
+
+                    });
+                    builder.show();
+                }
+                return;
+            }
+        }
+    }
 
     private void AddVenueWithSizing(double width, double height, String name) {
 
@@ -162,7 +195,8 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
         grid.setVisibility(View.VISIBLE);
         newVenue.SetGridSize(1);
         Map<String, Integer> rec = new HashMap<>();
-        mDatabase.child("venues").child(mUserId).push().setValue(newVenue);
+        newVenue.userId = mUserId;
+        mDatabase.child("venues").push().setValue(newVenue);
 
     }
 
@@ -201,6 +235,8 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.previewButton:
                 TextView gridSizeText = (TextView) findViewById(R.id.grid_size);
+                if(gridSizeText==null)
+                    break;
                 double gridSize = Double.parseDouble(gridSizeText.getText().toString());
                 if (gridSize <= 0 || gridSize > newVenue.width || gridSize > newVenue.height) {
                     Toast.makeText(this, "Grid size must have positive value, smaller than width and height", Toast.LENGTH_LONG).show();
@@ -214,28 +250,53 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.setGridSize:
                 gridSizeText = (TextView) findViewById(R.id.grid_size);
+                if(gridSizeText.length()==0){
+                    Toast.makeText(this, "Fill in grid size", Toast.LENGTH_LONG).show();
+                    break;
+                }
                 gridSize = Double.parseDouble(gridSizeText.getText().toString());
                 if (gridSize <= 0 || gridSize > newVenue.width || gridSize > newVenue.height) {
                     Toast.makeText(this, "Grid size must have positive value, smaller than width and height", Toast.LENGTH_LONG).show();
-                    return;
+                    break;
                 }
                 newVenue.SetGridSize(gridSize);
                 GridView gridView2 = (GridView) findViewById(R.id.grid_view2);
                 gridView2.setNumColumns(newVenue.maxX);
                 gridView2.setNumRows(newVenue.maxY);
                 setGrid();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    // Android M Permission check
+                    if (this.checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setTitle("Bekon needs location access");
+                        builder.setMessage("Please grant location access so Bekon can create new venue");
+                        builder.setPositiveButton(android.R.string.ok, null);
+                        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+
+                            @TargetApi(23)
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                requestPermissions(new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                                        PERMISSION_REQUEST_COARSE_LOCATION);
+                            }
+
+                        });
+                        builder.show();
+                    }
+                }
+
                 break;
             case R.id.startButton:
                 Button cal = (Button) findViewById(R.id.startButton);
-                //cal.setEnabled(false);
+                cal.setEnabled(false);
                 newVenue.beacons[0] = "DD:12:B2:90:39:48";
                 newVenue.beacons[1] = "C9:35:A9:B1:84:9D";
                 newVenue.beacons[2] = "E0:62:12:B9:F3:BE";
                 newVenue.beacons[3] = "EE:86:9C:E0:19:F9";
                 calibrationX = 0;
                 calibrationY = 0;
+                calibrationY+=1;
 
-                Log.wtf(TAG, 1 + " opa ");
                 calibratePosition();
                 break;
         }

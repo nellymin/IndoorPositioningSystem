@@ -1,27 +1,30 @@
 package com.nellymincheva.indoorpositioningsystem;
 
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.database.Cursor;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.Gson;
 
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -51,6 +54,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button addVenueButton = (Button) findViewById(R.id.add_venue_button);
         addVenueButton.setOnClickListener(this);
 
+
+        venues = new ArrayList<Venue>();
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        recyclerView = (RecyclerView)findViewById(R.id.venues_list);
+        linearLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        databaseReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                getAllVenues(dataSnapshot);
+            }
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                getAllVenues(dataSnapshot);
+            }
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                getAllVenues(dataSnapshot);
+            }
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
         Button showVenueButton = (Button) findViewById(R.id.show_venue_button);
         showVenueButton.setOnClickListener(this);
         if(mAuth.getCurrentUser() == null){
@@ -62,30 +92,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             LG.setText("Welcome, " + mAuth.getCurrentUser().getEmail());
         }
         else{
-            LG.setText("You are not logged in");
+            LG.setText("Welcome, guest. To create indoor maps login first");
         }
-
-/*
-        final RelativeLayout room = (RelativeLayout) findViewById(R.id.room);
-        final ViewGroup.LayoutParams roomParams = room.getLayoutParams();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        final double roomWidth = Float.parseFloat(sharedPreferences.getString("roomWidth", "1"));
-        final double roomHeight = Float.parseFloat(sharedPreferences.getString("roomHeight", "1"));
-        ViewTreeObserver viewTreeObserver = room.getViewTreeObserver();
-        if (viewTreeObserver.isAlive()) {
-            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    room.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                    roomWidthInPixels = room.getMeasuredWidth();
-                    roomScale[0] = room.getMeasuredWidth() / roomWidth;
-                    roomParams.height = (int) (roomHeight * roomScale[0]);
-                    DrawBeacons();
-                }
-            });
-        }
-        final ImageView userImg = (ImageView) findViewById(R.id.user_icon);
-*/
     }
 
     @Override
@@ -97,20 +105,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
 
-        if (roomWidthInPixels != 0) {
-/*
-            final RelativeLayout room = (RelativeLayout) findViewById(R.id.room);
-            final ViewGroup.LayoutParams roomParams = room.getLayoutParams();
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-            final double roomWidth = Float.parseFloat(sharedPreferences.getString("roomWidth", "1"));
-            final double roomHeight = Float.parseFloat(sharedPreferences.getString("roomHeight", "1"));
-            roomScale[0] = roomWidthInPixels / roomWidth;
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    roomWidthInPixels, (int) (roomHeight * roomScale[0]));
-            room.setLayoutParams(params);
-            DrawBeacons();
-        }
-        */}
         super.onResume();
     }
 
@@ -147,14 +141,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
-            case R.id.action_change_map:
-
-                // Create intent to Open Image applications like Gallery, Google Photos
-                Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-// Start the Intent
-                startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
-                return true;
             case R.id.action_login:
                 if (mUser == null) {
                     startActivity(new Intent(this, LoginActivity.class));
@@ -170,60 +156,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
-    public void loadImageGallery(View view) {
-        // Create intent to Open Image applications like Gallery, Google Photos
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        // Start the Intent
-        startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
-    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        try {
-            // When an Image is picked
-            if (requestCode == RESULT_LOAD_IMG && resultCode == RESULT_OK
-                    && null != data) {
-                // Get the Image from data
-
-                Uri selectedImage = data.getData();
-                String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
-                // Get the cursor
-                Cursor cursor = getContentResolver().query(selectedImage,
-                        filePathColumn, null, null, null);
-                // Move to first row
-                cursor.moveToFirst();
-
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                imgDecodableString = cursor.getString(columnIndex);
-                cursor.close();
-                ImageView imgView = (ImageView) findViewById(R.id.imgView);
-                // Set the Image in ImageView after decoding the String
-                imgView.setImageBitmap(BitmapFactory
-                        .decodeFile(imgDecodableString));
-
-            } else {
-                Toast.makeText(this, "You haven't picked Image",
-                        Toast.LENGTH_LONG).show();
-            }
-        } catch (Exception e) {
-            Toast.makeText(this, e + "Something went wrong", Toast.LENGTH_LONG)
-                    .show();
-        }
-
-    }
-
-
-    private void SwitchLanguage(String language) {
-        Locale locale = new Locale(language);
-        Locale.setDefault(locale);
-        Configuration config = new Configuration();
-        config.locale = locale;
-        getBaseContext().getResources().updateConfiguration(config,
-                getBaseContext().getResources().getDisplayMetrics());
-    }
 
     @Override
     public void onClick(View v) {
@@ -243,6 +176,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent.putExtras(b);
                 startActivity(intent);
                 break;
+        }
+    }
+
+    private RecyclerView recyclerView;
+    private LinearLayoutManager linearLayoutManager;
+    private RecyclerViewAdapter recyclerViewAdapter;
+    private DatabaseReference databaseReference;
+    private List<Venue> venues;
+    private void getAllVenues(DataSnapshot dataSnapshot){
+        for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
+            Venue v = (Venue) new Gson().fromJson(singleSnapshot.getValue().toString(), Venue.class);
+            v.venueId = singleSnapshot.getKey();
+            venues.add(v);
+            recyclerViewAdapter = new RecyclerViewAdapter(MainActivity.this, venues);
+            recyclerView.setAdapter(recyclerViewAdapter);
         }
     }
 }

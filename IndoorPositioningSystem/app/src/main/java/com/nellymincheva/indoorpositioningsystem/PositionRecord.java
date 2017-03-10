@@ -1,15 +1,24 @@
 package com.nellymincheva.indoorpositioningsystem;
 
+import android.util.ArrayMap;
+
+import java.io.Serializable;
 import java.util.Map;
 
-public class PositionRecord{
+public class PositionRecord implements Serializable{
     public Map<String,Double> records;
-    public int x, y;
+    public int x;
+    public int y;
 
     public PositionRecord(int x, int y, Map<String,Double> records){
         this.x = x;
         this.y = y;
         this.records = records;
+    }
+    public PositionRecord(int x, int y){
+        this.x = x;
+        this.y = y;
+        this.records = new ArrayMap<>();
     }
 
     public void AddRecord(String beaconAdress, Double rssi){

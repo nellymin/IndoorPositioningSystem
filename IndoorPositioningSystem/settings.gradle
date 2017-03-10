@@ -1,1 +1,1 @@
-include ':app', ':android-beacon-library-2.9'
+include ':app', ':android-beacon-library-2.9.2'

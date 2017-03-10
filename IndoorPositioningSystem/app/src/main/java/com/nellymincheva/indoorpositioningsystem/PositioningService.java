@@ -8,8 +8,12 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.ArrayMap;
+import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -62,10 +66,12 @@ public class PositioningService extends Service implements BeaconConsumer {
     @Override
     public IBinder onBind(Intent intent) {
         Toast.makeText(getApplicationContext(), "Started positioning", Toast.LENGTH_SHORT).show();
-
+        venue = (Venue) new Gson().fromJson(intent.getStringExtra("venue"), Venue.class);
+        //Log.wtf("zdr", " " + venue.name);
+        //List<PositionRecord> calibrationData = (List<PositionRecord>) intent.getSerializableExtra("map");
         beaconManager = BeaconManager.getInstanceForApplication(this);
         SetupBeaconManager(beaconManager);
-
+        positionRecords = new ArrayMap<>();
         beaconManager.bind(this);
 
         return mMessenger.getBinder();
@@ -96,10 +102,12 @@ public class PositioningService extends Service implements BeaconConsumer {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
 
+                Log.wtf("zdr", " 0");
                 if (beacons.size() > 0 && venue != null) {
                     for(Beacon beacon: beacons){
+                        Log.wtf("zdr", " "+beacon.getBluetoothAddress());
                         for(String b : venue.beacons){
-                            if(b==beacon.getBluetoothAddress())
+                            if(b.equals(beacon.getBluetoothAddress()))
                                 positionRecords.put(beacon.getBluetoothAddress(),beacon.getRssi());
                         }
                     }
@@ -119,10 +127,15 @@ public class PositioningService extends Service implements BeaconConsumer {
     }
 
     private void sendBroadcastMessage() {
+
+
         Pair<Integer,Integer> position = venue.findPosition(positionRecords);
+
             double userPositionY = position.first;
             double userPositionX = position.second;
-
+        Log.wtf("zdrr", " TUKA " + userPositionX);
+        Log.wtf("zdrr", " I TAM " + userPositionY);
+        Log.wtf("zdrr", " SILATA " + positionRecords.get("EE:86:9C:E0:19:F9"));
             Intent intent = new Intent(ACTION_USER_POSITION_BROADCAST);
             intent.putExtra(EXTRA_USER_POSITION_X, userPositionX);
             intent.putExtra(EXTRA_USER_POSITION_Y, userPositionY);
