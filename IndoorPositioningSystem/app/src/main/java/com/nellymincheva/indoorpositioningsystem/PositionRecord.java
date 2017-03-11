@@ -32,4 +32,23 @@ public class PositionRecord implements Serializable{
     public void ClearRecords(){
         this.records.clear();
     }
+
+    public int getX(){
+        return this.x;
+    }
+    public int getY(){
+        return this.y;
+    }
+    public void setX(int x){
+        this.x = x;
+    }
+    public void setY(int y){
+        this.y = y;
+    }
+    public Map<String, Double> getRecords(){
+        return this.records;
+    }
+    public void setRecords(Map<String, Double> records){
+        this.records = records;
+    }
 }

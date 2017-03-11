@@ -100,11 +100,12 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
                             String beaconAddress = positionRec.getKey();
                             Double rssi = positionRec.getValue();
                             records.put(beaconAddress, rssi);
-                            Log.wtf(TAG, beaconAddress + " " + rssi);
+                            Log.wtf("zdr", beaconAddress + " " + rssi);
                         }
                         PositionRecord pr = new PositionRecord(calibrationX, calibrationY, records);
                         newVenue.AddCalibrationData(pr);
 
+                        /*
                         GridView gv = (GridView) findViewById(R.id.grid_view2);
                         gv.changeCell(calibrationX,calibrationY);
                         if(calibrationX + 1 > newVenue.maxX){
@@ -118,6 +119,7 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
                             calibrationX++;
                             calibratePosition();
                         }
+                        */
 
                     }
                 }, new IntentFilter(CalibrationService.ACTION_CALIBRATE_POSITION_BROADCAST)
@@ -134,7 +136,6 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
         bindService(new Intent(this, CalibrationService.class), mConnection,
                 Context.BIND_AUTO_CREATE);
 
-        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         mDatabase = database.getReference();
         mAuth = FirebaseAuth.getInstance();
@@ -196,7 +197,7 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
         newVenue.SetGridSize(1);
         Map<String, Integer> rec = new HashMap<>();
         newVenue.userId = mUserId;
-        mDatabase.child("venues").push().setValue(newVenue);
+        //mDatabase.child("venues").push().setValue(newVenue);
 
     }
 
@@ -223,7 +224,7 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
                 TextView heightText = (TextView) findViewById(R.id.room_height);
                 if (widthText.getText().toString().matches("") || heightText.getText().toString().matches("") || name.getText().toString().matches("")) {
                     Toast.makeText(this, "Please enter values", Toast.LENGTH_LONG).show();
-                    return;
+                    break;
                 }
                 double width = Double.parseDouble(widthText.getText().toString());
                 double height = Double.parseDouble(heightText.getText().toString());
@@ -232,6 +233,8 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
                     break;
                 }
                 AddVenueWithSizing(width, height, name.getText().toString());
+
+                calibratePosition();
                 break;
             case R.id.previewButton:
                 TextView gridSizeText = (TextView) findViewById(R.id.grid_size);
@@ -289,10 +292,12 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
             case R.id.startButton:
                 Button cal = (Button) findViewById(R.id.startButton);
                 cal.setEnabled(false);
+                /*
                 newVenue.beacons[0] = "DD:12:B2:90:39:48";
                 newVenue.beacons[1] = "C9:35:A9:B1:84:9D";
                 newVenue.beacons[2] = "E0:62:12:B9:F3:BE";
                 newVenue.beacons[3] = "EE:86:9C:E0:19:F9";
+                */
                 calibrationX = 0;
                 calibrationY = 0;
                 calibrationY+=1;
@@ -315,9 +320,6 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
     public int n = 0;
     public void calibratePosition() {
 
-        n++;
-
-       Log.wtf(TAG, n + " opa ");
         if (!mCalibrationServiceBound) return;
         // Create and send a message to the service, using a supported 'what' value
         Message msg = Message.obtain(null, CalibrationService.MSG_CALIBRATE_POSITION, 0, 0);

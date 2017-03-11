@@ -11,7 +11,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.ArrayMap;
 import android.util.Log;
 import android.util.Pair;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -65,10 +64,7 @@ public class PositioningService extends Service implements BeaconConsumer {
      */
     @Override
     public IBinder onBind(Intent intent) {
-        Toast.makeText(getApplicationContext(), "Started positioning", Toast.LENGTH_SHORT).show();
         venue = (Venue) new Gson().fromJson(intent.getStringExtra("venue"), Venue.class);
-        //Log.wtf("zdr", " " + venue.name);
-        //List<PositionRecord> calibrationData = (List<PositionRecord>) intent.getSerializableExtra("map");
         beaconManager = BeaconManager.getInstanceForApplication(this);
         SetupBeaconManager(beaconManager);
         positionRecords = new ArrayMap<>();
@@ -102,7 +98,6 @@ public class PositioningService extends Service implements BeaconConsumer {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
 
-                Log.wtf("zdr", " 0");
                 if (beacons.size() > 0 && venue != null) {
                     for(Beacon beacon: beacons){
                         Log.wtf("zdr", " "+beacon.getBluetoothAddress());

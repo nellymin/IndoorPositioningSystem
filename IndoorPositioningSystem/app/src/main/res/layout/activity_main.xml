@@ -40,20 +40,24 @@
                     android:id="@+id/add_venue_button"
                     android:onClick="onClick" />
 
-                <Button
-                    android:text="Show venue"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/show_venue_button"
-                    android:onClick="onClick" />
-
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/venues_list"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="12dp"
                     android:orientation="vertical"
-                    android:scrollbars="none"/>
+                    android:scrollbars="none">
+
+                </android.support.v7.widget.RecyclerView>
+
+                <Button
+                    android:text="Show venue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/show_venue_button"
+                    android:onClick="onClick"
+                    android:visibility="invisible" />
+
             </LinearLayout>
 
         </RelativeLayout>

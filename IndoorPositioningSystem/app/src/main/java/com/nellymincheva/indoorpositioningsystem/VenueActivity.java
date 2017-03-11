@@ -7,12 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Messenger;
-import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -32,8 +30,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.json.JSONObject;
+
+import java.util.Map;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -150,9 +149,6 @@ public class VenueActivity extends AppCompatActivity {
 
         final RelativeLayout room = (RelativeLayout) findViewById(R.id.room);
         final ViewGroup.LayoutParams roomParams = room.getLayoutParams();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        final double roomWidth = Float.parseFloat(sharedPreferences.getString("roomWidth", "1"));
-        final double roomHeight = Float.parseFloat(sharedPreferences.getString("roomHeight", "1"));
         ViewTreeObserver viewTreeObserver = room.getViewTreeObserver();
         if (viewTreeObserver.isAlive()) {
             viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -160,8 +156,6 @@ public class VenueActivity extends AppCompatActivity {
                 public void onGlobalLayout() {
                     room.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                     roomWidthInPixels = room.getMeasuredWidth();
-                    roomScale[0] = room.getMeasuredWidth() / roomWidth;
-                    roomParams.height = (int) (roomHeight * roomScale[0]);
                 }
             });
         }
@@ -172,8 +166,8 @@ public class VenueActivity extends AppCompatActivity {
                     public void onReceive(Context context, Intent intent) {
                         double userX = intent.getDoubleExtra(PositioningService.EXTRA_USER_POSITION_X, 0);
                         double userY = intent.getDoubleExtra(PositioningService.EXTRA_USER_POSITION_Y, 0);
-                        userImg.setX(((float) userX*(float)roomScale[0]));
-                        userImg.setY(((float) userY*(float)roomScale[0]));
+                        userImg.setX(((float) userX*(float)roomScale[0] + (float)roomScale[0]/2));
+                        userImg.setY(((float) userY*(float)roomScale[0] + (float)roomScale[0]/2));
 
                     }
                 }, new IntentFilter(PositioningService.ACTION_USER_POSITION_BROADCAST)
@@ -209,29 +203,44 @@ public class VenueActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         super.onStart();
         // Bind to the service
-        Bundle b = new Bundle();
+        /*
         venue = new Venue();
         venue.name = "PATKAN";
         List<PositionRecord> pr = new ArrayList<>();
         PositionRecord rec = new PositionRecord(0,0);
-        double rssi = -30;
-        rec.AddRecord("EE:86:9C:E0:19:F9", rssi);
-        venue.maxX=2;
-        venue.maxY=2;
+        rec.AddRecord("E0:62:12:B9:F3:BE", -80.0);
+        rec.AddRecord("EE:86:9C:E0:19:F9", -80.0);
+        rec.AddRecord("DD:12:B2:90:39:48", -80.0);
+        rec.AddRecord("C9:35:A9:B1:84:9D", -36.0);
         pr.add(rec);
         rec = new PositionRecord(0,1);
-        rssi = -60;
-        String[] bec = new String[1];
-        bec[0]  ="EE:86:9C:E0:19:F9";
-        venue.setBeacons(bec);
-        rec.AddRecord("EE:86:9C:E0:19:F9", rssi);
+        rec.AddRecord("E0:62:12:B9:F3:BE", -36.0);
+        rec.AddRecord("EE:86:9C:E0:19:F9", -80.0);
+        rec.AddRecord("DD:12:B2:90:39:48", -80.0);
+        rec.AddRecord("C9:35:A9:B1:84:9D", -80.0);
         pr.add(rec);
+        rec = new PositionRecord(1,0);
+        rec.AddRecord("E0:62:12:B9:F3:BE", -80.0);
+        rec.AddRecord("EE:86:9C:E0:19:F9", -36.0);
+        rec.AddRecord("DD:12:B2:90:39:48", -80.0);
+        rec.AddRecord("C9:35:A9:B1:84:9D", -80.0);
+        pr.add(rec);
+        rec = new PositionRecord(1,1);
+        rec.AddRecord("E0:62:12:B9:F3:BE", -80.0);
+        rec.AddRecord("EE:86:9C:E0:19:F9", -80.0);
+        rec.AddRecord("DD:12:B2:90:39:48", -36.0);
+        rec.AddRecord("C9:35:A9:B1:84:9D", -80.0);
+        pr.add(rec);
+        venue.maxX=2;
+        venue.maxY=2;
+        List<String> bec = new ArrayList<>();
+        bec.add("E0:62:12:B9:F3:BE");
+        bec.add("EE:86:9C:E0:19:F9");
+        bec.add("DD:12:B2:90:39:48");
+        bec.add("C9:35:A9:B1:84:9D");
+        venue.setBeacons(bec);
         venue.setCalibrationData(pr);
-        Intent positioningServiceIntent = new Intent(this, PositioningService.class);
-        String venueGson = new Gson().toJson(venue);
-        positioningServiceIntent.putExtra("venue", venueGson);
-        bindService(positioningServiceIntent, mConnection,
-                Context.BIND_AUTO_CREATE);
+        */
 
         ImageView userIcon = (ImageView) findViewById(R.id.user_icon);
         LocalBroadcastManager.getInstance(this).registerReceiver(
@@ -245,14 +254,23 @@ public class VenueActivity extends AppCompatActivity {
                 }, new IntentFilter(PositioningService.ACTION_USER_POSITION_BROADCAST)
         );
 
+        final Intent positioningServiceIntent = new Intent(this, PositioningService.class);
         Query q = mDatabase.child("venues/" + venueId);
         q.addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot snapshot) {
 
-                venue =  (Venue) new Gson().fromJson(snapshot.getValue().toString(), Venue.class);
+                venue = (Venue) new Gson().fromJson(new JSONObject((Map)snapshot.getValue()).toString(), Venue.class);
+
+                String venueGson = new Gson().toJson(venue);
+                Log.wtf("zdre", venueGson);
+
+                positioningServiceIntent.putExtra("venue", venueGson);
+                bindService(positioningServiceIntent, mConnection,
+                        Context.BIND_AUTO_CREATE);
                 getSupportActionBar().setTitle("" + venue.name);
+                displayVenue();
             }
 
             @Override
@@ -296,13 +314,13 @@ public class VenueActivity extends AppCompatActivity {
     }
 
     public void displayVenue() {
-        /*
         GridView grid = (GridView) findViewById(R.id.grid_view);
         grid.setNumColumns(venue.maxX);
         grid.setNumRows(venue.maxY);
-        */
-        PositioningService.venue = venue;
-        Log.wtf("opa", venue.name);
+        final RelativeLayout room = (RelativeLayout) findViewById(R.id.room);
+        final ViewGroup.LayoutParams roomParams = room.getLayoutParams();
+        roomScale[0] = room.getMeasuredWidth() / venue.width;
+        roomParams.height = (int) (venue.height * roomScale[0]);
     }
 
     @Override

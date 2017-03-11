@@ -23,8 +23,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -38,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
+
+    private DatabaseReference mDatabase;
 
 
 
@@ -99,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onStart() {
         super.onStart();
-
     }
 
     @Override
@@ -138,9 +142,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
-                return true;
             case R.id.action_login:
                 if (mUser == null) {
                     startActivity(new Intent(this, LoginActivity.class));
@@ -186,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private List<Venue> venues;
     private void getAllVenues(DataSnapshot dataSnapshot){
         for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
-            Venue v = (Venue) new Gson().fromJson(singleSnapshot.getValue().toString(), Venue.class);
+            Venue v = (Venue) new Gson().fromJson(new JSONObject((Map)singleSnapshot.getValue()).toString(), Venue.class);
             v.venueId = singleSnapshot.getKey();
             venues.add(v);
             recyclerViewAdapter = new RecyclerViewAdapter(MainActivity.this, venues);

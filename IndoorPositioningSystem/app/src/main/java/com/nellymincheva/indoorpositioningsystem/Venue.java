@@ -12,7 +12,7 @@ public class Venue extends Object implements Serializable{
     public String name;
     public double width, height;
     public List<PositionRecord> calibrationData;
-    public String[] beacons;
+    public List<String> beacons;
     public double gridSize;
     public int maxX, maxY;
     public String userId;
@@ -23,7 +23,7 @@ public class Venue extends Object implements Serializable{
         this.name = name;
         this.width = width;
         this.height = height;
-        calibrationData = new ArrayList<>();
+        this.calibrationData = new ArrayList<>();
 
     }
     public Venue(double width, double height, String name, String userId){
@@ -31,10 +31,11 @@ public class Venue extends Object implements Serializable{
         this.width = width;
         this.height = height;
         this.userId = userId;
-        calibrationData = new ArrayList<>();
+        this.calibrationData = new ArrayList<>();
 
     }
     public Venue(){
+        this.calibrationData = new ArrayList<>();
 
     }
 
@@ -97,7 +98,7 @@ public class Venue extends Object implements Serializable{
         return position;
     }
 
-    public void SetBeacons(String[] beacons){
+    public void SetBeacons(List<String> beacons){
         this.beacons = beacons;
     }
 
@@ -137,11 +138,11 @@ public class Venue extends Object implements Serializable{
         return name;
     }
 
-    public String[] getBeacons() {
+    public List<String> getBeacons() {
         return beacons;
     }
 
-    public void setBeacons(String[] beacons) {
+    public void setBeacons(List<String> beacons) {
         this.beacons = beacons;
     }
 

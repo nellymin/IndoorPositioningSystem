@@ -8,7 +8,6 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -38,7 +37,7 @@ public class CalibrationService extends Service implements BeaconConsumer {
     long calibrationStarted;
     Intent intent;
     private int calibrationPeriod = 5000, scanNearbyPeriod = 5000;
-
+    boolean opa = false;
     static final int MSG_SCAN_NEARBY = 1;
     static final int MSG_CALIBRATE_POSITION = 2;
 
@@ -60,11 +59,19 @@ public class CalibrationService extends Service implements BeaconConsumer {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_SCAN_NEARBY:
+                    if(scanNearbyBeacons)
+                        break;
                     nearbyBeacons = new HashMap<>();
                     scanNearbyBeacons = true;
                     nearbyStarted = System.currentTimeMillis( );
                     break;
                 case MSG_CALIBRATE_POSITION:
+                    Log.wtf("opa", "vutre sme");
+                    if(opa)
+                        break;
+                    opa = true;
+                    if(calibratingPosition)
+                        break;
                     positionRecords = new HashMap<>();
                     addressRepeated = new HashMap<>();
                     calibratingPosition = true;
@@ -81,7 +88,6 @@ public class CalibrationService extends Service implements BeaconConsumer {
 
     @Override
     public IBinder onBind(Intent intent) {
-        Toast.makeText(getApplicationContext(), "Started positioning", Toast.LENGTH_SHORT).show();
         beaconManager = BeaconManager.getInstanceForApplication(this);
         SetupBeaconManager(beaconManager);
         beaconManager.bind(this);
@@ -120,11 +126,14 @@ public class CalibrationService extends Service implements BeaconConsumer {
 
                 if (beacons.size() > 0) {
 
-                    Log.wtf(TAG, "cal position?  " + calibratingPosition);
-                    Log.wtf(TAG, "cal started " + calibrationStarted);
                     long timeNow = System.currentTimeMillis( );
                     if(calibratingPosition){
-                        if(timeNow - calibrationStarted > 15000) {
+
+                        Log.wtf("zdr", "cal started " + calibrationStarted);
+                        Log.wtf("zdr", "now " + timeNow);
+                    }
+                    if(calibratingPosition){
+                        if((timeNow - calibrationStarted) > 15000) {
                             sendBroadcastMessage("CalibratePosition");
                             calibratingPosition = false;
                         }
@@ -145,7 +154,7 @@ public class CalibrationService extends Service implements BeaconConsumer {
                         }
                     }
                     else if(scanNearbyBeacons){
-                        if(timeNow - nearbyStarted > 5000) {
+                        if((timeNow - nearbyStarted) > 5000) {
                             sendBroadcastMessage("NearbyBeacons");
                             scanNearbyBeacons = false;
                         }
