@@ -168,6 +168,7 @@ public class VenueActivity extends AppCompatActivity {
                         double userY = intent.getDoubleExtra(PositioningService.EXTRA_USER_POSITION_Y, 0);
                         userImg.setX(((float) userX*(float)roomScale[0] + (float)roomScale[0]/2));
                         userImg.setY(((float) userY*(float)roomScale[0] + (float)roomScale[0]/2));
+                        displayVenue();
 
                     }
                 }, new IntentFilter(PositioningService.ACTION_USER_POSITION_BROADCAST)

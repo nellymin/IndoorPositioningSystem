@@ -29,6 +29,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,6 +73,8 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
         setGridBtn.setOnClickListener(this);
         Button previewBtn = (Button) findViewById(R.id.previewButton);
         previewBtn.setOnClickListener(this);
+        Button calibrateBtn = (Button) findViewById(R.id.calibrateButton);
+        calibrateBtn.setOnClickListener(this);
 
 
         registerReceiver(
@@ -104,22 +107,27 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
                         }
                         PositionRecord pr = new PositionRecord(calibrationX, calibrationY, records);
                         newVenue.AddCalibrationData(pr);
-
-                        /*
+                        Log.wtf("zdr", calibrationX+" x");
+                        Log.wtf("zdr", calibrationY+" y");
+                        Log.wtf("zdr", newVenue.maxX+" max x");
+                        Log.wtf("zdr", newVenue.maxY+" max y");
                         GridView gv = (GridView) findViewById(R.id.grid_view2);
                         gv.changeCell(calibrationX,calibrationY);
-                        if(calibrationX + 1 > newVenue.maxX){
+                        if(calibrationX + 1 >= newVenue.maxX){
                             calibrationX = 0;
-                            if(calibrationY<newVenue.maxY){
+                            if(calibrationY + 1 < newVenue.maxY){
                                 calibrationY++;
                                 calibratePosition();
                             }
+                            else{
+                                finishCalibration();
+                            }
+
                         }
                         else{
                             calibrationX++;
                             calibratePosition();
                         }
-                        */
 
                     }
                 }, new IntentFilter(CalibrationService.ACTION_CALIBRATE_POSITION_BROADCAST)
@@ -233,8 +241,6 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
                     break;
                 }
                 AddVenueWithSizing(width, height, name.getText().toString());
-
-                calibratePosition();
                 break;
             case R.id.previewButton:
                 TextView gridSizeText = (TextView) findViewById(R.id.grid_size);
@@ -287,23 +293,24 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
                         builder.show();
                     }
                 }
-
                 break;
-            case R.id.startButton:
-                Button cal = (Button) findViewById(R.id.startButton);
+
+            case R.id.calibrateButton:
+                Button cal = (Button) findViewById(R.id.calibrateButton);
                 cal.setEnabled(false);
-                /*
-                newVenue.beacons[0] = "DD:12:B2:90:39:48";
-                newVenue.beacons[1] = "C9:35:A9:B1:84:9D";
-                newVenue.beacons[2] = "E0:62:12:B9:F3:BE";
-                newVenue.beacons[3] = "EE:86:9C:E0:19:F9";
-                */
+                newVenue.beacons = new ArrayList<>();
+                newVenue.beacons.add("DD:12:B2:90:39:48");
+                newVenue.beacons.add("C9:35:A9:B1:84:9D");
+                newVenue.beacons.add("E0:62:12:B9:F3:BE");
+                newVenue.beacons.add("EE:86:9C:E0:19:F9");
                 calibrationX = 0;
                 calibrationY = 0;
-                calibrationY+=1;
 
                 calibratePosition();
                 break;
+            default:
+                break;
+
         }
     }
 
@@ -319,7 +326,6 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
     }
     public int n = 0;
     public void calibratePosition() {
-
         if (!mCalibrationServiceBound) return;
         // Create and send a message to the service, using a supported 'what' value
         Message msg = Message.obtain(null, CalibrationService.MSG_CALIBRATE_POSITION, 0, 0);
@@ -330,6 +336,11 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    public void finishCalibration(){
+
+        mDatabase.child("venues").push().setValue(newVenue);
+
+    }
 
     private void ShowAddVenue() {
 

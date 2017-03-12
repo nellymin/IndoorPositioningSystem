@@ -37,7 +37,6 @@ public class CalibrationService extends Service implements BeaconConsumer {
     long calibrationStarted;
     Intent intent;
     private int calibrationPeriod = 5000, scanNearbyPeriod = 5000;
-    boolean opa = false;
     static final int MSG_SCAN_NEARBY = 1;
     static final int MSG_CALIBRATE_POSITION = 2;
 
@@ -66,10 +65,6 @@ public class CalibrationService extends Service implements BeaconConsumer {
                     nearbyStarted = System.currentTimeMillis( );
                     break;
                 case MSG_CALIBRATE_POSITION:
-                    Log.wtf("opa", "vutre sme");
-                    if(opa)
-                        break;
-                    opa = true;
                     if(calibratingPosition)
                         break;
                     positionRecords = new HashMap<>();
@@ -101,7 +96,6 @@ public class CalibrationService extends Service implements BeaconConsumer {
     }
 
     private void SetupBeaconManager(BeaconManager bm) {
-
         bm.getBeaconParsers().add(new BeaconParser()
                 .setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
         bm.getBeaconParsers().add(new BeaconParser()

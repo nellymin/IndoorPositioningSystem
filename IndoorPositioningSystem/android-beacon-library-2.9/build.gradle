@@ -1,2 +1,0 @@
-configurations.maybeCreate("default")
-artifacts.add("default", file('android-beacon-library-2.9.aar'))

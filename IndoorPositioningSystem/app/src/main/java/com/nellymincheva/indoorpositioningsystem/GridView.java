@@ -24,7 +24,7 @@ public class GridView extends View {
         blackPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         pinkPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         int myColor =
-                context.getResources().getColor(R.color.roomBg);
+                context.getResources().getColor(R.color.bekonLight);
         pinkPaint.setColor(myColor);
     }
 

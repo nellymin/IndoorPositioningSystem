@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             LG.setText("Welcome, " + mAuth.getCurrentUser().getEmail());
         }
         else{
-            LG.setText("Welcome, guest. To create indoor maps login first");
+            LG.setText("Welcome, to create indoor maps login first");
         }
     }
 
