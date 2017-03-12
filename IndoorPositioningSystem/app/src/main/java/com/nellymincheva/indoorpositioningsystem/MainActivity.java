@@ -169,14 +169,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 startActivity(new Intent(this, AddVenueActivity.class));
                 break;
-            case R.id.show_venue_button:
-                Intent intent = new Intent(MainActivity.this, VenueActivity.class);
-                Bundle b = new Bundle();
-                b.putString("userUid", "4S7PzPby91fFM4CCEeySVITs74C3");
-                b.putString("venueId", "-K_us39u5_Xy_i69101K");
-                intent.putExtras(b);
-                startActivity(intent);
-                break;
         }
     }
 

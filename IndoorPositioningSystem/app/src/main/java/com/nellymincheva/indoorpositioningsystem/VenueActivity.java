@@ -34,27 +34,11 @@ import org.json.JSONObject;
 
 import java.util.Map;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
 public class VenueActivity extends AppCompatActivity {
-    /**
-     * Whether or not the system UI should be auto-hidden after
-     * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
-     */
     private static final boolean AUTO_HIDE = true;
 
-    /**
-     * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-     * user interaction before hiding the system UI.
-     */
     private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
 
-    /**
-     * Some older devices needs a small delay between UI widget updates
-     * and a change of the status and navigation bar.
-     */
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
     private View mContentView;
@@ -62,11 +46,6 @@ public class VenueActivity extends AppCompatActivity {
         @SuppressLint("InlinedApi")
         @Override
         public void run() {
-            // Delayed removal of status and navigation bar
-
-            // Note that some of these constants are new as of API 16 (Jelly Bean)
-            // and API 19 (KitKat). It is safe to use them, as they are inlined
-            // at compile-time and do nothing on earlier devices.
             mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -78,7 +57,6 @@ public class VenueActivity extends AppCompatActivity {
     private final Runnable mShowPart2Runnable = new Runnable() {
         @Override
         public void run() {
-            // Delayed display of UI elements
             ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
                 actionBar.show();
@@ -92,11 +70,6 @@ public class VenueActivity extends AppCompatActivity {
             hide();
         }
     };
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
     private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -125,7 +98,6 @@ public class VenueActivity extends AppCompatActivity {
         mVisible = true;
         mContentView = findViewById(R.id.fullscreen_content);
 
-        // Set up the user interaction to manually show or hide the system UI.
         mContentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -176,23 +148,13 @@ public class VenueActivity extends AppCompatActivity {
 
     }
 
-    /**
-     * Class for interacting with the main interface of the service.
-     */
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
-            // This is called when the connection with the service has been
-            // established, giving us the object we can use to
-            // interact with the service.  We are communicating with the
-            // service using a Messenger, so here we get a client-side
-            // representation of that from the raw IBinder object.
             mBeaconsService = new Messenger(service);
             mBeaconsBound = true;
         }
 
         public void onServiceDisconnected(ComponentName className) {
-            // This is called when the connection with the service has been
-            // unexpectedly disconnected -- that is, its process crashed.
             mBeaconsService = null;
             mBeaconsBound = false;
         }
@@ -203,46 +165,6 @@ public class VenueActivity extends AppCompatActivity {
     protected void onStart() {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         super.onStart();
-        // Bind to the service
-        /*
-        venue = new Venue();
-        venue.name = "PATKAN";
-        List<PositionRecord> pr = new ArrayList<>();
-        PositionRecord rec = new PositionRecord(0,0);
-        rec.AddRecord("E0:62:12:B9:F3:BE", -80.0);
-        rec.AddRecord("EE:86:9C:E0:19:F9", -80.0);
-        rec.AddRecord("DD:12:B2:90:39:48", -80.0);
-        rec.AddRecord("C9:35:A9:B1:84:9D", -36.0);
-        pr.add(rec);
-        rec = new PositionRecord(0,1);
-        rec.AddRecord("E0:62:12:B9:F3:BE", -36.0);
-        rec.AddRecord("EE:86:9C:E0:19:F9", -80.0);
-        rec.AddRecord("DD:12:B2:90:39:48", -80.0);
-        rec.AddRecord("C9:35:A9:B1:84:9D", -80.0);
-        pr.add(rec);
-        rec = new PositionRecord(1,0);
-        rec.AddRecord("E0:62:12:B9:F3:BE", -80.0);
-        rec.AddRecord("EE:86:9C:E0:19:F9", -36.0);
-        rec.AddRecord("DD:12:B2:90:39:48", -80.0);
-        rec.AddRecord("C9:35:A9:B1:84:9D", -80.0);
-        pr.add(rec);
-        rec = new PositionRecord(1,1);
-        rec.AddRecord("E0:62:12:B9:F3:BE", -80.0);
-        rec.AddRecord("EE:86:9C:E0:19:F9", -80.0);
-        rec.AddRecord("DD:12:B2:90:39:48", -36.0);
-        rec.AddRecord("C9:35:A9:B1:84:9D", -80.0);
-        pr.add(rec);
-        venue.maxX=2;
-        venue.maxY=2;
-        List<String> bec = new ArrayList<>();
-        bec.add("E0:62:12:B9:F3:BE");
-        bec.add("EE:86:9C:E0:19:F9");
-        bec.add("DD:12:B2:90:39:48");
-        bec.add("C9:35:A9:B1:84:9D");
-        venue.setBeacons(bec);
-        venue.setCalibrationData(pr);
-        */
-
         ImageView userIcon = (ImageView) findViewById(R.id.user_icon);
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 new BroadcastReceiver() {
@@ -287,9 +209,6 @@ public class VenueActivity extends AppCompatActivity {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
         delayedHide(100);
     }
 
@@ -302,14 +221,12 @@ public class VenueActivity extends AppCompatActivity {
     }
 
     private void hide() {
-        // Hide UI first
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
         mVisible = false;
 
-        // Schedule a runnable to remove the status and navigation bar after a delay
         mHideHandler.removeCallbacks(mShowPart2Runnable);
         mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
     }
@@ -335,20 +252,14 @@ public class VenueActivity extends AppCompatActivity {
 
     @SuppressLint("InlinedApi")
     private void show() {
-        // Show the system bar
         mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         mVisible = true;
 
-        // Schedule a runnable to display UI elements after a delay
         mHideHandler.removeCallbacks(mHidePart2Runnable);
         mHideHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY);
     }
 
-    /**
-     * Schedules a call to hide() in [delay] milliseconds, canceling any
-     * previously scheduled calls.
-     */
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);

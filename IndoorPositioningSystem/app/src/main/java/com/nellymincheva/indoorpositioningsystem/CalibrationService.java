@@ -7,7 +7,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.util.Log;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -20,8 +19,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-
-import static android.content.ContentValues.TAG;
 
 public class CalibrationService extends Service implements BeaconConsumer {
 
@@ -122,18 +119,12 @@ public class CalibrationService extends Service implements BeaconConsumer {
 
                     long timeNow = System.currentTimeMillis( );
                     if(calibratingPosition){
-
-                        Log.wtf("zdr", "cal started " + calibrationStarted);
-                        Log.wtf("zdr", "now " + timeNow);
-                    }
-                    if(calibratingPosition){
                         if((timeNow - calibrationStarted) > 15000) {
                             sendBroadcastMessage("CalibratePosition");
                             calibratingPosition = false;
                         }
                         else
                         for(Beacon beacon: beacons){
-                            Log.wtf(TAG, "zasqkoh " + beacon.getRssi());
                             String address = beacon.getBluetoothAddress();
 
                             if(positionRecords.containsKey(address)){

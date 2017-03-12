@@ -105,20 +105,6 @@ public class GridView extends View {
         }
     }
 
-    /*
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN && this.canEdit) {
-            int column = (int)(event.getX() / cellWidth);
-            int row = (int)(event.getY() / cellHeight);
-
-            cellChecked[column][row] = !cellChecked[column][row];
-            invalidate();
-        }
-
-        return true;
-    }
-    */
     public void changeCell(int i, int j){
         cellChecked[i][j] = !cellChecked[i][j];
         invalidate();

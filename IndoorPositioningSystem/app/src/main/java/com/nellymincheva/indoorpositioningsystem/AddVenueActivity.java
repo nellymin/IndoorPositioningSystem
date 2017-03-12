@@ -75,6 +75,8 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
         previewBtn.setOnClickListener(this);
         Button calibrateBtn = (Button) findViewById(R.id.calibrateButton);
         calibrateBtn.setOnClickListener(this);
+        Button calibrationDoneBtn = (Button) findViewById(R.id.calibrationDoneButton);
+        calibrationDoneBtn.setOnClickListener(this);
 
 
         registerReceiver(
@@ -103,14 +105,9 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
                             String beaconAddress = positionRec.getKey();
                             Double rssi = positionRec.getValue();
                             records.put(beaconAddress, rssi);
-                            Log.wtf("zdr", beaconAddress + " " + rssi);
                         }
                         PositionRecord pr = new PositionRecord(calibrationX, calibrationY, records);
                         newVenue.AddCalibrationData(pr);
-                        Log.wtf("zdr", calibrationX+" x");
-                        Log.wtf("zdr", calibrationY+" y");
-                        Log.wtf("zdr", newVenue.maxX+" max x");
-                        Log.wtf("zdr", newVenue.maxY+" max y");
                         GridView gv = (GridView) findViewById(R.id.grid_view2);
                         gv.changeCell(calibrationX,calibrationY);
                         if(calibrationX + 1 >= newVenue.maxX){
@@ -308,6 +305,8 @@ public class AddVenueActivity extends AppCompatActivity implements View.OnClickL
 
                 calibratePosition();
                 break;
+            case R.id.calibrationDoneButton:
+                startActivity(new Intent(this, MainActivity.class));
             default:
                 break;
 

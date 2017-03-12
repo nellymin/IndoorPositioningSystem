@@ -9,7 +9,6 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.ArrayMap;
-import android.util.Log;
 import android.util.Pair;
 
 import com.google.gson.Gson;
@@ -39,9 +38,6 @@ public class PositioningService extends Service implements BeaconConsumer {
 
     private int scanPeriod;
 
-    /**
-     * Handler of incoming messages from clients.
-     */
     class IncomingHandler extends Handler {
 
         @Override
@@ -53,15 +49,8 @@ public class PositioningService extends Service implements BeaconConsumer {
         }
     }
 
-    /**
-     * Target we publish for clients to send messages to IncomingHandler.
-     */
     final Messenger mMessenger = new Messenger(new IncomingHandler());
 
-    /**
-     * When binding to the service, we return an interface to our messenger
-     * for sending messages to the service.
-     */
     @Override
     public IBinder onBind(Intent intent) {
         venue = (Venue) new Gson().fromJson(intent.getStringExtra("venue"), Venue.class);
@@ -99,7 +88,6 @@ public class PositioningService extends Service implements BeaconConsumer {
 
                 if (beacons.size() > 0 && venue != null) {
                     for(Beacon beacon: beacons){
-                        Log.wtf("zdr", " "+beacon.getBluetoothAddress());
                         for(String b : venue.beacons){
                             if(b.equals(beacon.getBluetoothAddress()))
                                 positionRecords.put(beacon.getBluetoothAddress(),beacon.getRssi());
@@ -127,9 +115,6 @@ public class PositioningService extends Service implements BeaconConsumer {
 
             double userPositionY = position.first;
             double userPositionX = position.second;
-        Log.wtf("zdrr", " TUKA " + userPositionX);
-        Log.wtf("zdrr", " I TAM " + userPositionY);
-        Log.wtf("zdrr", " SILATA " + positionRecords.get("EE:86:9C:E0:19:F9"));
             Intent intent = new Intent(ACTION_USER_POSITION_BROADCAST);
             intent.putExtra(EXTRA_USER_POSITION_X, userPositionX);
             intent.putExtra(EXTRA_USER_POSITION_Y, userPositionY);
