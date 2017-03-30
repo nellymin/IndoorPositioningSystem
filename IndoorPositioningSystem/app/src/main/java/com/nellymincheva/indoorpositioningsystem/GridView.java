@@ -29,11 +29,11 @@ public class GridView extends View {
     }
 
 
-
     public void setNumColumns(int numColumns) {
         this.numColumns = numColumns;
         calculateDimensions();
     }
+
     public void setCanEdit(boolean canEdit) {
         this.canEdit = canEdit;
     }
@@ -51,7 +51,7 @@ public class GridView extends View {
         return numRows;
     }
 
-    public boolean isChecked(int i, int j){
+    public boolean isChecked(int i, int j) {
         return cellChecked[i][j];
     }
 
@@ -105,7 +105,7 @@ public class GridView extends View {
         }
     }
 
-    public void changeCell(int i, int j){
+    public void changeCell(int i, int j) {
         cellChecked[i][j] = !cellChecked[i][j];
         invalidate();
     }

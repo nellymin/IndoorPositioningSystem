@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -131,15 +132,22 @@ public class VenueActivity extends AppCompatActivity {
                 }
             });
         }
-        final ImageView userImg = (ImageView) findViewById(R.id.user_icon);
+        final ImageView userImgEuclideanDistance = (ImageView) findViewById(R.id.user_icon_euclidean_distance);
+        final ImageView userImgNearestSieve = (ImageView) findViewById(R.id.user_icon_nearest_sieve);
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
-                        double userX = intent.getDoubleExtra(PositioningService.EXTRA_USER_POSITION_X, 0);
-                        double userY = intent.getDoubleExtra(PositioningService.EXTRA_USER_POSITION_Y, 0);
-                        userImg.setX(((float) userX*(float)roomScale[0] + (float)roomScale[0]/2));
-                        userImg.setY(((float) userY*(float)roomScale[0] + (float)roomScale[0]/2));
+                        double userXEucledeanDistance= intent.getDoubleExtra(PositioningService.EXTRA_USER_POSITION_X_EUCLIDEAN_DISTANCE, 0);
+                        double userYEucledeanDistance= intent.getDoubleExtra(PositioningService.EXTRA_USER_POSITION_Y_EUCLIDEAN_DISTANCE, 0);
+                        userImgEuclideanDistance.setY(((float) userXEucledeanDistance*(float)roomScale[0] + (float)roomScale[0]/2));
+                        userImgEuclideanDistance.setX(((float) userYEucledeanDistance*(float)roomScale[0] + (float)roomScale[0]/2));
+                        double userXNearestSieve = intent.getDoubleExtra(PositioningService.EXTRA_USER_POSITION_X_NEAREST_SIEVE, 0);
+                        double userYNearestSieve = intent.getDoubleExtra(PositioningService.EXTRA_USER_POSITION_Y_NEAREST_SIEVE, 0);
+                        userImgNearestSieve.setY(((float) userXNearestSieve*(float)roomScale[0] + (float)roomScale[0]/2)-10);
+                        userImgNearestSieve.setX(((float) userYNearestSieve*(float)roomScale[0] + (float)roomScale[0]/2)-10);
+                        TextView data = (TextView) findViewById(R.id.data);
+                        //data.setText(userX + " " + userY + " " + userX / userY + " * " + userImg.getX() + " " + userImg.getY() + " " + userImg.getX() / userImg.getY());
                         displayVenue();
 
                     }
@@ -165,13 +173,23 @@ public class VenueActivity extends AppCompatActivity {
     protected void onStart() {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         super.onStart();
-        ImageView userIcon = (ImageView) findViewById(R.id.user_icon);
+        final ImageView userImgEuclideanDistance = (ImageView) findViewById(R.id.user_icon_euclidean_distance);
+        final ImageView userImgNearestSieve = (ImageView) findViewById(R.id.user_icon_nearest_sieve);
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
-                        double userX = intent.getDoubleExtra(PositioningService.EXTRA_USER_POSITION_X, 0);
-                        double userY = intent.getDoubleExtra(PositioningService.EXTRA_USER_POSITION_Y, 0);
+                        double userXEucledeanDistance= intent.getDoubleExtra(PositioningService.EXTRA_USER_POSITION_X_EUCLIDEAN_DISTANCE, 0);
+                        double userYEucledeanDistance= intent.getDoubleExtra(PositioningService.EXTRA_USER_POSITION_Y_EUCLIDEAN_DISTANCE, 0);
+                        userImgEuclideanDistance.setY(((float) userXEucledeanDistance*(float)roomScale[0] + (float)roomScale[0]/2));
+                        userImgEuclideanDistance.setX(((float) userYEucledeanDistance*(float)roomScale[0] + (float)roomScale[0]/2));
+                        double userXNearestSieve = intent.getDoubleExtra(PositioningService.EXTRA_USER_POSITION_X_NEAREST_SIEVE, 0);
+                        double userYNearestSieve = intent.getDoubleExtra(PositioningService.EXTRA_USER_POSITION_Y_NEAREST_SIEVE, 0);
+                        userImgNearestSieve.setY(((float) userXNearestSieve*(float)roomScale[0] + (float)roomScale[0]/2)-10);
+                        userImgNearestSieve.setX(((float) userYNearestSieve*(float)roomScale[0] + (float)roomScale[0]/2)-10);
+                        TextView data = (TextView) findViewById(R.id.data);
+                        //data.setText(userX + " " + userY + " " + userX / userY + " * " + userImg.getX() + " " + userImg.getY() + " " + userImg.getX() / userImg.getY());
+                        displayVenue();
 
                     }
                 }, new IntentFilter(PositioningService.ACTION_USER_POSITION_BROADCAST)

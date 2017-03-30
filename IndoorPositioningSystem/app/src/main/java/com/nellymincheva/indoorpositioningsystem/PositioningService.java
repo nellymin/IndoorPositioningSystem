@@ -8,7 +8,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.ArrayMap;
+import android.util.Log;
 import android.util.Pair;
 
 import com.google.gson.Gson;
@@ -21,19 +21,24 @@ import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
 import java.util.Collection;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class PositioningService extends Service implements BeaconConsumer {
 
     public static Venue venue;
     private BeaconManager beaconManager;
-    Map<String,Integer> positionRecords;
+    SortedMap<String, Integer> positionRecords;
 
 
     public static final String
             ACTION_USER_POSITION_BROADCAST = PositioningService.class.getName() + "LocationBroadcast",
             EXTRA_USER_POSITION_X = "user_position_x",
-            EXTRA_USER_POSITION_Y = "user_position_y";
+            EXTRA_USER_POSITION_Y = "user_position_y",
+            EXTRA_USER_POSITION_X_EUCLIDEAN_DISTANCE = "user_position_x_euclidean_distance",
+            EXTRA_USER_POSITION_Y_EUCLIDEAN_DISTANCE = "user_position_y_euclidean_distance",
+            EXTRA_USER_POSITION_X_NEAREST_SIEVE = "user_position_x_nearest_sieve",
+            EXTRA_USER_POSITION_Y_NEAREST_SIEVE = "user_position_y_nearest_sieve";
 
 
     private int scanPeriod;
@@ -56,7 +61,7 @@ public class PositioningService extends Service implements BeaconConsumer {
         venue = (Venue) new Gson().fromJson(intent.getStringExtra("venue"), Venue.class);
         beaconManager = BeaconManager.getInstanceForApplication(this);
         SetupBeaconManager(beaconManager);
-        positionRecords = new ArrayMap<>();
+        positionRecords = new TreeMap<>();
         beaconManager.bind(this);
 
         return mMessenger.getBinder();
@@ -87,10 +92,10 @@ public class PositioningService extends Service implements BeaconConsumer {
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
 
                 if (beacons.size() > 0 && venue != null) {
-                    for(Beacon beacon: beacons){
-                        for(String b : venue.beacons){
-                            if(b.equals(beacon.getBluetoothAddress()))
-                                positionRecords.put(beacon.getBluetoothAddress(),beacon.getRssi());
+                    for (Beacon beacon : beacons) {
+                        for (String b : venue.beacons) {
+                            if (b.equals(beacon.getBluetoothAddress()))
+                                positionRecords.put(beacon.getBluetoothAddress(), beacon.getRssi());
                         }
                     }
                     sendBroadcastMessage();
@@ -100,7 +105,8 @@ public class PositioningService extends Service implements BeaconConsumer {
 
         try {
             beaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
-        } catch (RemoteException e) {    }
+        } catch (RemoteException e) {
+        }
     }
 
     @Override
@@ -110,14 +116,21 @@ public class PositioningService extends Service implements BeaconConsumer {
 
     private void sendBroadcastMessage() {
 
+        Log.wtf("tuka", " ****** ");
+        Pair<Integer, Integer> positionEuclideanDistance = venue.findPositionEucledeanDistance(positionRecords);
+        Pair<Integer, Integer> positionNearestSieve = venue.findPositionNearestSieve(positionRecords);
 
-        Pair<Integer,Integer> position = venue.findPosition(positionRecords);
-
-            double userPositionY = position.first;
-            double userPositionX = position.second;
-            Intent intent = new Intent(ACTION_USER_POSITION_BROADCAST);
-            intent.putExtra(EXTRA_USER_POSITION_X, userPositionX);
-            intent.putExtra(EXTRA_USER_POSITION_Y, userPositionY);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        Log.wtf("tuka", "ed " + positionEuclideanDistance.first + " " + positionEuclideanDistance.second);
+        Log.wtf("tuka", "ns " + positionNearestSieve.first + " " + positionNearestSieve.second);
+        double userPositionYEuclideanDistance = positionEuclideanDistance.first;
+        double userPositionXEuclideanDistance = positionEuclideanDistance.second;
+        double userPositionYNearestSieve = positionNearestSieve.first;
+        double userPositionXNearestSieve = positionNearestSieve.second;
+        Intent intent = new Intent(ACTION_USER_POSITION_BROADCAST);
+        intent.putExtra(EXTRA_USER_POSITION_X_EUCLIDEAN_DISTANCE, userPositionXEuclideanDistance);
+        intent.putExtra(EXTRA_USER_POSITION_Y_EUCLIDEAN_DISTANCE, userPositionYEuclideanDistance);
+        intent.putExtra(EXTRA_USER_POSITION_X_NEAREST_SIEVE, userPositionXNearestSieve);
+        intent.putExtra(EXTRA_USER_POSITION_Y_NEAREST_SIEVE, userPositionYNearestSieve);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

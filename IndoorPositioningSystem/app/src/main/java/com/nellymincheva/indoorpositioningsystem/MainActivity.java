@@ -45,8 +45,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private DatabaseReference mDatabase;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -62,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         venues = new ArrayList<Venue>();
         databaseReference = FirebaseDatabase.getInstance().getReference();
-        recyclerView = (RecyclerView)findViewById(R.id.venues_list);
+        recyclerView = (RecyclerView) findViewById(R.id.venues_list);
         linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         databaseReference.addChildEventListener(new ChildEventListener() {
@@ -70,17 +68,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 getAllVenues(dataSnapshot);
             }
+
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 getAllVenues(dataSnapshot);
             }
+
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 getAllVenues(dataSnapshot);
             }
+
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
@@ -88,15 +90,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Button showVenueButton = (Button) findViewById(R.id.show_venue_button);
         showVenueButton.setOnClickListener(this);
-        if(mAuth.getCurrentUser() == null){
+        if (mAuth.getCurrentUser() == null) {
             addVenueButton.setVisibility(View.INVISIBLE);
         }
 
         TextView LG = (TextView) findViewById(R.id.user_logged_in);
-        if(mAuth.getCurrentUser() != null){
+        if (mAuth.getCurrentUser() != null) {
             LG.setText("Welcome, " + mAuth.getCurrentUser().getEmail());
-        }
-        else{
+        } else {
             LG.setText("Welcome, to create indoor maps login first");
         }
     }
@@ -118,18 +119,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         MenuInflater inflater = getMenuInflater();
         activateSearch(menu);
         inflater.inflate(R.menu.main_menu, menu);
-        if(mUser == null){
+        if (mUser == null) {
             menu.findItem(R.id.action_login).setVisible(true);
             menu.findItem(R.id.action_logout).setVisible(false);
-        }
-        else{
+        } else {
             menu.findItem(R.id.action_login).setVisible(false);
             menu.findItem(R.id.action_logout).setVisible(true);
         }
         return true;
     }
 
-    private void activateSearch(Menu menu){
+    private void activateSearch(Menu menu) {
         /*
         MenuItem searchItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
@@ -158,7 +158,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -177,9 +176,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerViewAdapter recyclerViewAdapter;
     private DatabaseReference databaseReference;
     private List<Venue> venues;
-    private void getAllVenues(DataSnapshot dataSnapshot){
-        for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
-            Venue v = (Venue) new Gson().fromJson(new JSONObject((Map)singleSnapshot.getValue()).toString(), Venue.class);
+
+    private void getAllVenues(DataSnapshot dataSnapshot) {
+        for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+            Venue v = (Venue) new Gson().fromJson(new JSONObject((Map) singleSnapshot.getValue()).toString(), Venue.class);
             v.venueId = singleSnapshot.getKey();
             venues.add(v);
             recyclerViewAdapter = new RecyclerViewAdapter(MainActivity.this, venues);
